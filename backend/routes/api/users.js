@@ -29,6 +29,12 @@ const validateSignup = [
     handleValidationErrors
   ];
 
+  // test
+  router.get('/', async (req, res) => {
+    const users = await User.findAll()
+    res.json(users)
+  })
+
 // Sign up
 router.post(
     '/',
@@ -53,5 +59,7 @@ router.post(
       });
     }
   );
+
+
 
 module.exports = router;
