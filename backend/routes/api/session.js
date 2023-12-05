@@ -3,8 +3,8 @@ const express = require('express');
 const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
-const { setTokenCookie, restoreUser } = require('../../utils/auth');
-const { User } = require('../../db/models');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
+const { User, Spot } = require('../../db/models');
 
 const router = express.Router();
 
@@ -21,6 +21,8 @@ const validateLogin = [
       .withMessage('Please provide a password.'),
     handleValidationErrors
 ];
+
+
 
 // Log in
 router.post(
@@ -62,6 +64,7 @@ router.post(
     }
   );
 
+
 // Log out
 router.delete(
     '/',
@@ -88,6 +91,19 @@ router.get(
           user: safeUser
         });
       } else return res.json({ user: null });
+    }
+  );
+
+  router.get(
+    '/spots',
+    async (req, res) => {
+      const { user } = req;
+      if (user) {
+        const spots = await Spot.findAll({where:{ownerId: user.id}})
+        return res.json({
+          Spots: spots
+        });
+      }
     }
   );
 

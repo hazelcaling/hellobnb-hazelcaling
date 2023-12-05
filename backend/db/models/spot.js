@@ -1,6 +1,7 @@
 'use strict';
 
 const { Model, Validator } = require('sequelize');
+const { Review } = require('../models');
 
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
@@ -16,11 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       Spot.hasMany(models.Review, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
 
       Spot.belongsTo(models.User, { foreignKey: 'ownerId'});
-
     }
   }
   Spot.init({
-    ownerId: DataTypes.INTEGER,
+    ownerId: DataTypes.STRING,
     address: DataTypes.STRING,
     city: DataTypes.STRING,
     state: DataTypes.STRING,
@@ -29,9 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     lng: DataTypes.FLOAT,
     name: DataTypes.STRING,
     description: DataTypes.STRING,
-    price: DataTypes.INTEGER,
-    avgRating: DataTypes.FLOAT,
-    previewImage: DataTypes.BOOLEAN
+    price: DataTypes.FLOAT,
   }, {
     sequelize,
     modelName: 'Spot',
