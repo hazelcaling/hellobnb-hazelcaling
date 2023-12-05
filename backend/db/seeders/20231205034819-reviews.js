@@ -1,6 +1,6 @@
 'use strict';
 
-const { Review } = require('../models');
+const { Spot, User, Review } = require('../models');
 
 let options = {};
 if (process.env.NODE_ENV === 'production') {
@@ -9,16 +9,16 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    const reviews = [];
-    for (let i = 1; i < 4; i++) {
-      reviews.push({
-        // userId: i,
-        // spotId: i,
-        review: `This is review ${i}`,
-        stars: i+1
-      })
-    }
-    await Review.bulkCreate(reviews, { validate: true })
+    const user = await User.findOne({where: {username: 'Demo-lition'}});
+    const spot = await Spot.findOne({where: {address: '1 Street'}});
+    await Review.bulkCreate([
+      {
+        userId: user.id,
+        spotId: spot.id,
+        review: 'This is review 1',
+        stars: 5
+      }
+    ])
 
   },
 
@@ -26,7 +26,7 @@ module.exports = {
     options.tableName = 'Reviews';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      id: { [Op.in]: [1,2,3] }
+      review: { [Op.in]: ['This is review 1'] }
     }, {});
 
   }
