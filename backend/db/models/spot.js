@@ -1,6 +1,7 @@
 'use strict';
 
 const { Model, Validator } = require('sequelize');
+const { Review } = require('../models');
 
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {

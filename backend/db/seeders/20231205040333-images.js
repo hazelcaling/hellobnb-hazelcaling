@@ -9,10 +9,10 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    const spotId = await Spot.findOne({where:{address: '1 Street'}})
+    const spot = await Spot.findOne({where:{address: '1 Street'}})
     await Image.bulkCreate([
       {
-        imageableId: 2,
+        imageableId: spot.id,
         imageableType: 'Spot',
         url: '/home/hazelcaling/aa-projects-hazelcaling/airbnb-clone-project-hazelcaling/images/Web capture_4-12-2023_20159_www.freepik.com.jpeg',
         preview: false
@@ -21,11 +21,11 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    const spotId = await Spot.findOne({where:{address: '1 Street'}})
+    const spot = await Spot.findOne({where:{address: '1 Street'}})
     options.tableName = 'Images';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      imageableId: { [Op.in]: [2] }
+      imageableId: { [Op.in]: [spot.id] }
     }, {});
   }
 };
