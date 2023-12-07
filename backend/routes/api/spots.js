@@ -4,6 +4,7 @@ const router = express.Router();
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
+const spot = require('../../db/models/spot');
 
 const validate = [
     check('address')
@@ -129,6 +130,85 @@ router.post('/', requireAuth, validate, async (req, res, next) => {
             details: err.errors ? err.errors.map(item => item.message).join(', ') : err.message
         });
     }
+
 })
+
+// Delete a Spot
+router.delete('/:spotId', async (req, res) => {
+    const { user } = req;
+    if (user) {
+        const id = req.params.spotId
+        const spot = await Spot.findOne({where: {id: id}});
+        if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'})
+
+        if (!spot) res.status(404).json({ "message": "Spot couldn't be found" });
+        await Spot.destroy({where: {id: id}});
+        res.json({ "message": "Successfully deleted" })
+    }
+})
+
+// Edit a Spot
+router.put('/:spotId', validate, async (req, res) => {
+    const {user} = req
+    const spot = await Spot.findOne({where: {id: req.params.spotId}})
+    if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'})
+
+    try {
+        const { address, city, state, country, lat, lng, name, description, price } = req.body;
+        if (!spot) return res.status(404).json({ "message": "Spot couldn't be found" })
+        await Spot.update({
+            address: address,
+            city: city,
+            state: state,
+            country: country,
+            lat: lat,
+            lng: lng,
+            name: name,
+            description: description,
+            price: price
+        }, {
+            where: {
+                id: req.params.spotId
+            }
+        })
+
+        const updatedSpot = await Spot.findOne({where: {id: req.params.spotId}})
+
+        res.json({
+            status: 'success',
+            message: 'Successfully updated spot',
+            data: updatedSpot
+        })
+
+
+    } catch(err) {
+        next({
+            status: "not-found",
+            message: 'Could not update new spot',
+            details: err.errors ? err.errors.map(item => item.message).join(', ') : err.message
+        });
+    }
+});
+
+//https://e-images.juwaistatic.com/content-site/2021/09/29031331/doraemon-house-1024x576.png
+// Add an Image to a Spot based on the Spot's id
+router.post('/:spotId/images', async (req, res) => {
+    const spot = await Spot.findOne({where: {id: req.params.spotId}});
+    if (!spot) return res.status(404).json({ message: "Spot couldn't be found"})
+
+    if (req.user) {
+        if (req.user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'});
+        const { url, preview } = req.body
+        const newImg = await Image.create({
+        imageableId: req.params.spotId,
+        imageableType: 'Spot',
+        url: url,
+        preview: preview
+    });
+    console.log(newImg.toJSON())
+    res.json({ id: newImg.id, url: newImg.url, preview: newImg.preview})
+    }
+})
+
 
 module.exports = router
