@@ -1,11 +1,26 @@
 const express = require('express');
-const { Image } = require('../../db/models');
+const { Image, Spot } = require('../../db/models');
 const router = express.Router();
+// const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
+
 
 // test
 router.get('/', async (req, res) => {
     const images = await Image.findAll();
     res.json(images)
 });
+
+// Delete a Spot Image
+router.delete('/spot-images/:imageId', async (req, res) => {
+    const img = await Image.findByPk(req.params.imageId);
+    const spot = await Spot.findOne({where: {ownerId: req.user.id}})
+    if (!img) return res.status(404).json({ message: "Spot Image couldn't be found"})
+    if (req.user) {
+        if (req.user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'});
+        await Image.destroy({where: {id: req.params.imageId}});
+        res.json({ message: "Successfully deleted"})
+    }
+
+})
 
 module.exports = router
