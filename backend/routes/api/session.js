@@ -79,6 +79,7 @@ router.get(
     '/',
     (req, res) => {
       const { user } = req;
+
       if (user) {
         const safeUser = {
             id: user.id,
@@ -106,6 +107,8 @@ router.get(
       }
     }
   );
+
+
 
 
 
