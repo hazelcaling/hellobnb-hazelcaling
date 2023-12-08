@@ -45,6 +45,17 @@ const validate = [
 
     handleValidationErrors
 ];
+const validateReview = [
+    check('review')
+      .exists({ checkFalsy: true })
+      .notEmpty()
+      .withMessage('Review text is required'),
+    check('stars')
+      .exists({ checkFalsy: true })
+      .notEmpty()
+      .withMessage('Stars must be an integer from 1 to 5'),
+    handleValidationErrors
+];
 
 // Get all Spots
 router.get('/', async (req, res) => {
@@ -190,7 +201,7 @@ router.put('/:spotId', validate, async (req, res) => {
     }
 });
 
-//https://e-images.juwaistatic.com/content-site/2021/09/29031331/doraemon-house-1024x576.png
+
 // Add an Image to a Spot based on the Spot's id
 router.post('/:spotId/images', async (req, res) => {
     const spot = await Spot.findOne({where: {id: req.params.spotId}});
@@ -205,10 +216,42 @@ router.post('/:spotId/images', async (req, res) => {
         url: url,
         preview: preview
     });
-    console.log(newImg.toJSON())
+
     res.json({ id: newImg.id, url: newImg.url, preview: newImg.preview})
     }
-})
+});
+
+router.get('/')
+
+router.post('/:spotId/reviews', validateReview, async (req, res) => {
+    const { spotId } = req.params
+    const { user } = req
+    const spot = await Spot.findOne({where: {id: spotId}});
+    const review = await Review.findOne({where: {spotId: spotId}});
+
+    if (!spot) return res.status(404).json({ message: "Spot couldn't be found" })
+    if (!user) return res.status(403).json({message: 'Login required'});
+    if (user.id !== spot.ownerId) return res.status(403).json({message: 'Spot must belong to current user'});
+    if (review) return res.status(500).json({ message: "User already has a review for this spot" })
+
+        const newReview = await Review.create({
+        userId: user.id,
+        spotId: spotId,
+        review: req.body.review,
+        stars: req.body.stars});
+        return res.status(201).json(newReview);
+});
+
+// Get all Reviews by a Spot's id
+router.get('/:spotId/reviews', async (req, res) => {
+    const { spotId } = req.params
+    const spot = await Spot.findOne({where: {id: spotId}});
+    const review = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Image, as: 'ReviewImages'}]},{where: {spotId: spotId}});
+
+    if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
+    res.json({Reviews: review})
+
+});
 
 
 module.exports = router
