@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Spot.hasMany(models.Image, {
         foreignKey: 'imageableId',
+        as: 'previewImage',
         constraints: false,
         scope: {
           imageableType: 'Spot'
@@ -17,6 +18,15 @@ module.exports = (sequelize, DataTypes) => {
       Spot.hasMany(models.Review, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
 
       Spot.belongsTo(models.User, { foreignKey: 'ownerId'});
+    }
+
+    getNumReviews = async function (spotId) {
+      return await Review.count({where:{spotId: spotId}})
+    }
+    getAverageRating = async function (spotId) {
+      const numReviews = getNumReviews(spotId);
+      totalSum = await Review.sum('stars')
+      return totalSum / numReviews
     }
   }
   Spot.init({
@@ -52,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
     price: {
       type: DataTypes.FLOAT,
       allowNull: false
-    }
+    },
   }, {
     sequelize,
     modelName: 'Spot',
