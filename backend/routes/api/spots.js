@@ -1,10 +1,10 @@
 const express = require('express');
-const { Spot, Review, Image, User } = require('../../db/models');
+const { Spot, Review, Image, User, Booking } = require('../../db/models');
 const router = express.Router();
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const spot = require('../../db/models/spot');
+const { Op } = require('sequelize')
 
 const validate = [
     check('address')
@@ -246,12 +246,79 @@ router.post('/:spotId/reviews', validateReview, async (req, res) => {
 router.get('/:spotId/reviews', async (req, res) => {
     const { spotId } = req.params
     const spot = await Spot.findOne({where: {id: spotId}});
-    const review = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Image, as: 'ReviewImages'}]},{where: {spotId: spotId}});
-
+    const review = await Review.findAll({
+        include: [{model: User, attributes: ['id', 'firstName', 'lastName']},
+        {model: Image, as: 'ReviewImages'}]},{where: {spotId: spotId}});
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
     res.json({Reviews: review})
 
 });
+
+
+// Get all Bookings for a Spot based on the Spot's id
+router.get('/:spotId/bookings', async (req, res) => {
+    const {spotId} = req.params;
+    const {user} = req;
+    const spot = await Spot.findByPk(spotId);
+    const ownerBookings = await Booking.findAll({
+        where: {
+            spotId
+        }, include: [
+            {
+                model: User,
+                attributes: ['id', 'firstName', 'lastName']
+            }
+        ]
+    });
+    const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate']},{ where: {spotId: spotId}})
+
+    if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
+
+    if (spot.ownerId !== user.id) {
+        return res.json({Bookings: bookings})
+    }
+    if (spot.ownerId === user.id) {
+        return res.json({Bookings: ownerBookings})
+    }
+})
+
+// Create a Booking from a Spot based on the Spot's id
+router.post('/:spotId/bookings', async (req, res) => {
+    const {spotId} = req.params;
+    const {currentUser} = req;
+    const { startDate, endDate } = req.body;
+    const spot = await Spot.findByPk(spotId);
+
+    if (!spot) return res.status(404).json({message: "Spot couldn't be found"});
+    if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Spot must not belong to the current user'});
+
+    // Check if the spot is already booked for the specified date
+    const conflictingBooking = await Booking.findOne({
+        where: {
+            spotId,
+            startDate: {
+                [Op.lt]: new Date(endDate),
+            },
+            endDate: {
+                [Op.gt]: new Date(startDate)
+            }
+        }
+    });
+
+    if (conflictingBooking) res.status(403).json({
+        "message": "Sorry, this spot is already booked for the specified dates"
+    })
+
+
+    const newBooking = await Booking.create({
+        userId: req.user.id,
+        spotId,
+        startDate,
+        endDate
+    })
+    res.json(newBooking)
+});
+
 
 
 module.exports = router

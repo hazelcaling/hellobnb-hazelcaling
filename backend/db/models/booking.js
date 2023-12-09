@@ -15,11 +15,17 @@ module.exports = (sequelize, DataTypes) => {
     spotId: DataTypes.INTEGER,
     startDate: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
     },
     endDate: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isAfter: {
+          args: [this.startDate],
+          msg: "endDate cannot be on or before startDate"
+        }
+      }
     }
   }, {
     sequelize,
