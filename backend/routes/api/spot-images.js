@@ -20,7 +20,7 @@ router.delete('/spot-images/:imageId', async (req, res) => {
         await Image.destroy({where: {id: req.params.imageId}});
         res.json({ message: "Successfully deleted"})
     }
+});
 
-})
 
 module.exports = router
