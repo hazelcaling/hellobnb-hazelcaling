@@ -19,6 +19,14 @@ const validateReviewEdit = [
     handleValidationErrors
 ];
 
+// Get all Reviews of the Current User
+router.get('/current', async (req, res) => {
+    const reviews = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Spot}, {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
+    res.json({
+        "Reviews": reviews
+    })
+});
+
 // Add an Image to a Review based on the Review's id
 router.post('/:reviewId/images', async (req, res) => {
     const review = await Review.findOne({where: {id: req.params.reviewId}})
@@ -36,13 +44,7 @@ router.post('/:reviewId/images', async (req, res) => {
     res.json({id: newImg.id, url: newImg.url})
 })
 
-// Get all Reviews of the Current User
-router.get('/current', async (req, res) => {
-    const reviews = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Spot}, {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
-    res.json({
-        "Reviews": reviews
-    })
-});
+
 
 // Edit a Review
 router.put('/:reviewId', validateReviewEdit , async (req, res, next) => {

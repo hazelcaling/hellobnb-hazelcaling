@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       Spot.hasMany(models.Image, {
         foreignKey: 'imageableId',
         as: 'previewImage',
+        as: 'SpotImages',
         constraints: false,
         scope: {
           imageableType: 'Spot'
@@ -17,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       Spot.hasMany(models.Booking, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
       Spot.hasMany(models.Review, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
 
-      Spot.belongsTo(models.User, {foreignKey: 'ownerId'});
+      Spot.belongsTo(models.User, {foreignKey: 'ownerId', as: 'Owner'});
     }
 
     getNumReviews = async function (spotId) {

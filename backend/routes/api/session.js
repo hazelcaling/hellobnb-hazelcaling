@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User, Spot } = require('../../db/models');
+const { User, Spot, Sequelize, Review, Image } = require('../../db/models');
 
 const router = express.Router();
 
@@ -94,12 +94,27 @@ router.get(
     }
   );
 
+  // Get all Spots owned by the Current User
   router.get(
-    '/spots',
+    '/spots', requireAuth,
     async (req, res) => {
       const { user } = req;
+
       if (user) {
-        const spots = await Spot.findAll({where:{ownerId: user.id}})
+        const spots = await Spot.findAll({
+          attributes: [
+            'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
+            // [Sequelize.fn('AVG',Sequelize.col('reviews.stars')), 'avgRating']
+            [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
+          ],
+          include: [
+            {model: Review, attributes: []},
+            {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
+          ],
+          subQuery: false,
+          group: ['Spot.id'],
+        },
+          {where:{ownerId: user.id}})
         return res.json({
           Spots: spots
         });
