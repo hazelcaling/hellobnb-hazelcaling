@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       Spot.hasMany(models.Booking, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
       Spot.hasMany(models.Review, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
 
-      Spot.belongsTo(models.User, { foreignKey: 'ownerId'});
+      Spot.belongsTo(models.User, {foreignKey: 'ownerId'});
     }
 
     getNumReviews = async function (spotId) {

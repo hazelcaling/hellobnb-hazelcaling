@@ -28,7 +28,10 @@ router.post('/:reviewId/images', async (req, res) => {
     if (req.user.id !== review.userId) return res.status(403).json({message: 'Forbidden'});
 
     const newImg = await Image.create({
-        url: req.body.url
+        imageableId: req.params.reviewId,
+        imageableType: 'Review',
+        url: req.body.url,
+        preview: req.body.preview
     });
     res.json({id: newImg.id, url: newImg.url})
 })
@@ -83,10 +86,6 @@ router.delete('/:reviewId', async (req, res) => {
     await Review.destroy({where: {id: reviewId}});
     res.json({message: "Successfully deleted"})
 })
-
-
-
-
 
 
 

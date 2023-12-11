@@ -1,10 +1,11 @@
 const express = require('express');
-const { Spot, Review, Image, User, Booking } = require('../../db/models');
+const { Spot, Review, Image, User, Booking, Sequelize } = require('../../db/models');
 const router = express.Router();
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
+const spot = require('../../db/models/spot');
 
 const validate = [
     check('address')
@@ -59,13 +60,20 @@ const validateReview = [
 
 // Get all Spots
 router.get('/', async (req, res) => {
-    const spots = await Spot.findAll()
-    // ({
-    //     attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price'],
-    // }, { raw: true })
+    const spots = await Spot.findAll({
+        // attributes: [
+        //     'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
+        //     [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
+        //     // [Sequelize.literal('(SELECT url FROM images WHERE images.imageableId = Spot.id LIMIT 1)')]
+        // ],
+        // include: [{ model: Review, attributes: []},
+        //     // {model: Image, as: 'previewImage'}
+        // ]
+    })
+
+
 
     const spotList = [];
-
     for (let i = 0; i < spots.length; i++) {
         const totalNumReviews = await Review.count({where:{spotId: spots[i].id}})
         const totalSum = await Review.sum('stars')
@@ -82,8 +90,52 @@ router.get('/', async (req, res) => {
         spot.previewImage = images[0].url
     }
 
-    res.json(spotList)
 
+    // Extract query parameters
+    const page = parseInt(req.query.page) || 1;
+    const size = parseInt(req.query.size) || 20;
+    const minLat = parseFloat(req.query.minLat);
+    const maxLat = parseFloat(req.query.minLat);
+    const minLng = parseFloat(req.query.minLng);
+    const maxLng = parseFloat(req.query.minLng);
+    const minPrice = parseFloat(req.query.minPrice) || 0;
+    const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
+
+    // Apply filters
+    const filteredSpots = spotList.filter(spot => {
+        const withinLatRange = (!minLat || spot.lat >= minLat) && (!maxLat || spot.lat <= maxLat);
+        const withinLngRange = (!minLng || spot.lng >= minLng) && (!maxLng || spot.lat <= maxLng);
+        const withinPriceRange = spot.price >= minPrice && spot.price <= maxPrice;
+        return withinLatRange && withinLngRange && withinPriceRange
+    });
+
+    // Paginate results
+    const startIndex = (page -1) * size;
+    const paginatedSpots = filteredSpots.slice(startIndex, startIndex + size);
+
+    // // Extract query parameters
+    // const page = parseInt(req.query.page) || 1;
+    // const size = parseInt(req.query.size) || 20;
+    // const minLat = parseFloat(req.query.minLat);
+    // const maxLat = parseFloat(req.query.minLat);
+    // const minLng = parseFloat(req.query.minLng);
+    // const maxLng = parseFloat(req.query.minLng);
+    // const minPrice = parseFloat(req.query.minPrice) || 0;
+    // const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
+
+    // // Apply filters
+    // const filteredSpots = spotList.filter(spot => {
+    //     const withinLatRange = (!minLat || spot.lat >= minLat) && (!maxLat || spot.lat <= maxLat);
+    //     const withinLngRange = (!minLng || spot.lng >= minLng) && (!maxLng || spot.lat <= maxLng);
+    //     const withinPriceRange = spot.price >= minPrice && spot.price <= maxPrice;
+    //     return withinLatRange && withinLngRange && withinPriceRange
+    // });
+
+    // // Paginate results
+    // const startIndex = (page -1) * size;
+    // const paginatedSpots = filteredSpots.slice(startIndex, startIndex + size);
+
+    res.json(paginatedSpots)
 });
 
 // Get details of a Spot from an id
@@ -99,7 +151,9 @@ router.get('/:spotId', async (req, res) => {
     if (!spot.totalNumReviews) {
         spot.avgStarRating = 0;
     } else {
-        spot.avgStarRating = totalSum / spot.totalNumReviews
+        spot.avgStarRating = (totalSum / spot.totalNumReviews).toFixed(1)
+
+
     }
     const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['id', 'url', 'preview']})
     SpotImages = images
@@ -318,6 +372,8 @@ router.post('/:spotId/bookings', async (req, res) => {
     })
     res.json(newBooking)
 });
+
+
 
 
 
