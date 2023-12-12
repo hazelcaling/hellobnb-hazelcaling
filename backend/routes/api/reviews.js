@@ -1,7 +1,7 @@
 const express = require('express');
 const { Review, User, Spot, Image } = require('../../db/models');
 const router = express.Router();
-
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
@@ -20,8 +20,13 @@ const validateReviewEdit = [
 ];
 
 // Get all Reviews of the Current User
-router.get('/current', async (req, res) => {
-    const reviews = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Spot}, {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
+router.get('/current', requireAuth, async (req, res) => {
+    const reviews = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'], include: [{model: Image, as: 'previewImage', attributes: ['url'], limit: 1}]}, {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
+    reviews.forEach(review => {
+        review.toJSON()
+        const urlVal = review.Spot.previewImage[0].dataValues.url
+        review.Spot.previewImage[0].dataValues = urlVal
+    })
     res.json({
         "Reviews": reviews
     })
@@ -29,7 +34,10 @@ router.get('/current', async (req, res) => {
 
 // Add an Image to a Review based on the Review's id
 router.post('/:reviewId/images', async (req, res) => {
-    const review = await Review.findOne({where: {id: req.params.reviewId}})
+    const review = await Review.findOne({where: {id: req.params.reviewId}});
+    const review1 = await Review.findByPk(req.params.reviewId, {include: [{model: Image, as: 'ReviewImages'}]})
+    if (review1.ReviewImages.length >= 10) return res.status(403).json({message: "Maximum number of images for this resource was reached"})
+
     if (!review) return res.status(404).json({message: "Review couldn't be found" });
 
     if (req.user)

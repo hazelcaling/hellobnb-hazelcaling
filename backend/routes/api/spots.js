@@ -155,11 +155,7 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
             price: price
         })
         res.statusCode = 201
-        res.json({
-            status: "success",
-            message: "Successfully created Spot",
-            data: newSpot
-        });``
+        res.json(newSpot)
 
     } catch(err) {
         next({
@@ -216,11 +212,7 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res) => {
 
         const updatedSpot = await Spot.findOne({where: {id: req.params.spotId}})
 
-        res.json({
-            status: 'success',
-            message: 'Successfully updated spot',
-            data: updatedSpot
-        })
+        res.json(updatedSpot)
 
     } catch(err) {
         next({
@@ -233,6 +225,7 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res) => {
 
 // Delete a Spot
 router.delete('/:spotId', requireAuth,async (req, res) => {
+    const spot = await Spot.findOne({where: {id: req.params.spotId}})
     if (!spot) res.status(404).json({ "message": "Spot couldn't be found" });
     const { user } = req;
     if (user) {

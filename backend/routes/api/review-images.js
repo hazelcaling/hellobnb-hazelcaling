@@ -1,11 +1,11 @@
 const express = require('express');
 const { Image, Review } = require('../../db/models');
 const router = express.Router();
-// const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 
 
 // Delete a Review Image
-router.delete('/:imageId', async(req, res) => {
+router.delete('/:imageId', requireAuth, async(req, res) => {
     const img = await Image.findByPk(req.params.imageId);
     const review = await Review.findOne({where: {userId: req.user.id}});
     if (!img) return res.status(404).json({message: "Review Image couldn't be found"});
