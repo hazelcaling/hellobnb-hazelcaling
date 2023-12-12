@@ -64,31 +64,22 @@ router.get('/', async (req, res) => {
         attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
             [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
-            [Sequelize.literal('(SELECT url FROM images WHERE images.imageableId = Spot.id LIMIT 1)')]
+            // [Sequelize.literal('(SELECT url FROM images WHERE images.imageableId = Spot.id LIMIT 1)')]
         ],
         include: [
             { model: Review, attributes: []},
-            {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
+            // {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
         ],
         group: ['Spot.id']
     })
 
-    // const spotList = [];
-    // for (let i = 0; i < spots.length; i++) {
-    //     const totalNumReviews = await Review.count({where:{spotId: spots[i].id}})
-    //     const totalSum = await Review.sum('stars')
-    //     const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
-    //     const spot = spots[i].toJSON()
-    //     spotList.push(spot)
-    //     spot.numReviews = spot.Reviews
-    //     // spot.numReviews = totalNumReviews
-    //     if(!totalNumReviews) {
-    //         spot.avgRating = 0;
-    //     } else {
-    //         spot.avgRating = totalSum / totalNumReviews
-    //     }
-    //     spot.previewImage = images[0].url
-    // }
+    const spotList = [];
+    for (let i = 0; i < spots.length; i++) {
+        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+        const spot = spots[i].toJSON()
+        spotList.push(spot)
+        spot.previewImage = images[0].url
+    }
 
     // Extract query parameters
     const page = parseInt(req.query.page) || 1;
@@ -101,7 +92,7 @@ router.get('/', async (req, res) => {
     const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
 
     // Apply filters
-    const filteredSpots = spots.filter(spot => {
+    const filteredSpots = spotList.filter(spot => {
         const withinLatRange = (!minLat || spot.lat >= minLat) && (!maxLat || spot.lat <= maxLat);
         const withinLngRange = (!minLng || spot.lng >= minLng) && (!maxLng || spot.lat <= maxLng);
         const withinPriceRange = spot.price >= minPrice && spot.price <= maxPrice;
@@ -128,7 +119,7 @@ router.get('/:spotId', async (req, res) => {
         ],
         include: [
             { model: Review, attributes: []},
-            {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
+            // {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
             {model: User, as: 'Owner', attributes: ['id', 'firstName', 'lastName']},
         ],
         where: {id: req.params.spotId}

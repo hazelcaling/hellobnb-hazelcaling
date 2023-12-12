@@ -109,14 +109,22 @@ router.get(
           ],
           include: [
             {model: Review, attributes: []},
-            {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
+            // {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
           ],
-          subQuery: false,
           group: ['Spot.id'],
         },
-          {where:{ownerId: user.id}})
+          {where:{ownerId: user.id}});
+
+          const spotList = [];
+          for (let i = 0; i < spots.length; i++) {
+              const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+              const spot = spots[i].toJSON()
+              spotList.push(spot)
+              spot.previewImage = images[0].url
+          }
+
         return res.json({
-          Spots: spots
+          Spots: spotList
         });
       }
     }

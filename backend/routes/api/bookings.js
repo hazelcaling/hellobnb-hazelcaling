@@ -13,18 +13,26 @@ router.get('/current', async (req, res) => {
                 {
                     model: Spot,
                     attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price' ],
-                    include: [
-                        {
-                            model: Image,
-                            attributes: ['preview'],
-                            as:'previewImage'
-                        }
-                    ]
+                    // include: [
+                    //     {
+                    //         model: Image,
+                    //         attributes: ['url'],
+                    //         as:'previewImage'
+                    //     }
+                    // ]
                 }
             ]
         })
 
-        res.json({Bookings: userBookings})
+        const bookings = [];
+        for (let i = 0; i < userBookings.length; i++) {
+        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+        const booking = userBookings[i].toJSON()
+        bookings.push(booking)
+        booking.Spot.previewImage = images[0].url
+    }
+
+        res.json({Bookings: bookings})
 });
 
 // Edit a Booking
