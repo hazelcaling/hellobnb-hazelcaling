@@ -1,7 +1,7 @@
 'use strict';
 
 const { Model, Validator } = require('sequelize');
-const { Review } = require('../models');
+
 
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
@@ -32,14 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       Spot.belongsTo(models.User, {foreignKey: 'ownerId', as: 'Owner'});
     }
 
-    getNumReviews = async function (spotId) {
-      return await Review.count({where:{spotId: spotId}})
-    }
-    getAverageRating = async function (spotId) {
-      const numReviews = getNumReviews(spotId);
-      totalSum = await Review.sum('stars')
-      return totalSum / numReviews
-    }
+
   }
   Spot.init({
     ownerId: {
