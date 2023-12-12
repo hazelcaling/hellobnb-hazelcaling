@@ -1,5 +1,5 @@
 const express = require('express');
-const { Spot, Review, Image, User, Booking, Sequelize } = require('../../db/models');
+const { Spot, Review, Image, User, Booking, Sequelize, sequelize } = require('../../db/models');
 const router = express.Router();
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { check } = require('express-validator');
@@ -63,8 +63,9 @@ router.get('/', async (req, res) => {
     const spots = await Spot.findAll({
         attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
+            // [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
             // [Sequelize.literal('(SELECT url FROM images WHERE images.imageableId = Spot.id LIMIT 1)')]
+            [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating']
         ],
         include: [
             { model: Review, attributes: []},
@@ -77,6 +78,8 @@ router.get('/', async (req, res) => {
     for (let i = 0; i < spots.length; i++) {
         const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
         const spot = spots[i].toJSON()
+        // spot.avgRating = spot.Review.reduce((acc, el) => acc + el, 0)
+
         spotList.push(spot)
         spot.previewImage = images[0].url
     }
