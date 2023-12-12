@@ -9,12 +9,23 @@ module.exports = (sequelize, DataTypes) => {
       Spot.hasMany(models.Image, {
         foreignKey: 'imageableId',
         as: 'previewImage',
+
+        constraints: false,
+        scope: {
+          imageableType: 'Spot'
+        }
+      });
+
+      Spot.hasMany(models.Image, {
+        foreignKey: 'imageableId',
+
         as: 'SpotImages',
         constraints: false,
         scope: {
           imageableType: 'Spot'
         }
       });
+
       Spot.hasMany(models.Booking, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
       Spot.hasMany(models.Review, { foreignKey: 'spotId', onDelete: 'cascade', hooks: true });
 

@@ -1,17 +1,12 @@
 const express = require('express');
 const { Image, Spot } = require('../../db/models');
 const router = express.Router();
-// const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 
 
-// test
-router.get('/', async (req, res) => {
-    const images = await Image.findAll();
-    res.json(images)
-});
 
 // Delete a Spot Image
-router.delete('/spot-images/:imageId', async (req, res) => {
+router.delete('/:imageId', requireAuth,async (req, res) => {
     const img = await Image.findByPk(req.params.imageId);
     const spot = await Spot.findOne({where: {ownerId: req.user.id}})
     if (!img) return res.status(404).json({ message: "Spot Image couldn't be found"})
