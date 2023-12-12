@@ -21,14 +21,24 @@ const validateReviewEdit = [
 
 // Get all Reviews of the Current User
 router.get('/current', requireAuth, async (req, res) => {
-    const reviews = await Review.findAll({include: [{model: User, attributes: ['id', 'firstName', 'lastName']}, {model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'], include: [{model: Image, as: 'previewImage', attributes: ['url'], limit: 1}]}, {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
-    reviews.forEach(review => {
-        review.toJSON()
-        const urlVal = review.Spot.previewImage[0].dataValues.url
-        review.Spot.previewImage[0].dataValues = urlVal
-    })
+    const reviews = await Review.findAll({
+        include: [
+            {model: User, attributes: ['id', 'firstName', 'lastName']},
+            {model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
+            include: [
+                {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
+            ]},
+                {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
+
+    const reviewList = [];
+    for (let i = 0; i < reviews.length; i++) {
+        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+        const review = reviews[i].toJSON()
+        reviewList.push(review)
+        review.Spot.previewImage = images[0].url
+    }
     res.json({
-        "Reviews": reviews
+        "Reviews": reviewList
     })
 });
 
