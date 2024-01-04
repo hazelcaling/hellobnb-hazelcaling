@@ -63,9 +63,7 @@ router.get('/', async (req, res) => {
     const spots = await Spot.findAll({
         attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            // [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
-            // [Sequelize.literal('(SELECT url FROM images WHERE images.imageableId = Spot.id LIMIT 1)')]
-            [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating']
+            [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
         ],
         include: [
             { model: Review, attributes: []},
@@ -78,12 +76,9 @@ router.get('/', async (req, res) => {
     for (let i = 0; i < spots.length; i++) {
         const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
         const spot = spots[i].toJSON()
-        // spot.avgRating = spot.avgRating.toFixed(1)
-
         spotList.push(spot)
         spot.previewImage = images[0].url
     }
-
 
     // Extract query parameters
     const page = parseInt(req.query.page) || 1;
@@ -104,7 +99,7 @@ router.get('/', async (req, res) => {
     });
 
     // Paginate results
-    const startIndex = (page -1) * size;
+    const startIndex = (page - 1) * size;
     const paginatedSpots = filteredSpots.slice(startIndex, startIndex + size);
 
     res.json({
@@ -122,8 +117,8 @@ router.get(
         const spots = await Spot.findAll({
           attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            // [Sequelize.fn('AVG',Sequelize.col('reviews.stars')), 'avgRating']
-            [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
+            [Sequelize.fn('AVG',Sequelize.col('reviews.stars')), 'avgRating']
+
           ],
           include: [
             {model: Review, attributes: []},
