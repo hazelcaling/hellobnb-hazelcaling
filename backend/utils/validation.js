@@ -20,27 +20,6 @@ const handleValidationErrors = (req, _res, next) => {
     next();
   };
 
-// const validateLogin = () => {
-//   return [check('credential')
-//       .exists({ checkFalsy: true })
-//       .notEmpty()
-//       .withMessage('Email or username is required'),
-//     check('password')
-//       .exists({ checkFalsy: true })
-//       .withMessage('Password is required'),
-//     handleValidationErrors]
-// }
-
-  // const validateLogin = [
-  //   check('credential')
-  //     .exists({ checkFalsy: true })
-  //     .notEmpty()
-  //     .withMessage('Email or username is required'),
-  //   check('password')
-  //     .exists({ checkFalsy: true })
-  //     .withMessage('Password is required'),
-  //   handleValidationErrors
-  // ];
 
   module.exports = {
     handleValidationErrors,
