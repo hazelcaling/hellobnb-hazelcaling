@@ -69,7 +69,7 @@ router.get('/', async (req, res) => {
         ],
         include: [
             { model: Review, attributes: []},
-            // {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
+            {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
         ],
         group: ['Spot.id']
     })
@@ -78,11 +78,12 @@ router.get('/', async (req, res) => {
     for (let i = 0; i < spots.length; i++) {
         const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
         const spot = spots[i].toJSON()
-        // spot.avgRating = spot.Review.reduce((acc, el) => acc + el, 0)
+        // spot.avgRating = spot.avgRating.toFixed(1)
 
         spotList.push(spot)
         spot.previewImage = images[0].url
     }
+
 
     // Extract query parameters
     const page = parseInt(req.query.page) || 1;
@@ -106,8 +107,46 @@ router.get('/', async (req, res) => {
     const startIndex = (page -1) * size;
     const paginatedSpots = filteredSpots.slice(startIndex, startIndex + size);
 
-    res.json(paginatedSpots)
+    res.json({
+        'Spots': paginatedSpots
+    })
 });
+
+// Get all Spots owned by the Current User
+router.get(
+    '/current', requireAuth,
+    async (req, res) => {
+      const { user } = req;
+
+      if (user) {
+        const spots = await Spot.findAll({
+          attributes: [
+            'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
+            // [Sequelize.fn('AVG',Sequelize.col('reviews.stars')), 'avgRating']
+            [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
+          ],
+          include: [
+            {model: Review, attributes: []},
+            // {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
+          ],
+          group: ['Spot.id'],
+        },
+          {where:{ownerId: user.id}});
+
+          const spotList = [];
+          for (let i = 0; i < spots.length; i++) {
+              const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+              const spot = spots[i].toJSON()
+              spotList.push(spot)
+              spot.previewImage = images[0].url
+          }
+
+        return res.json({
+          Spots: spotList
+        });
+      }
+    }
+  );
 
 // Get details of a Spot from an id
 router.get('/:spotId', async (req, res) => {
@@ -118,11 +157,11 @@ router.get('/:spotId', async (req, res) => {
         attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('reviews.id')), 'numReviews'],
-            [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgStarRating']
+            [Sequelize.fn('AVG', sequelize.col('stars')), 'avgRating']
         ],
         include: [
             { model: Review, attributes: []},
-            // {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
+            {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
             {model: User, as: 'Owner', attributes: ['id', 'firstName', 'lastName']},
         ],
         where: {id: req.params.spotId}
@@ -135,7 +174,7 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
     const { user } = req;
 
-    try {
+
         const newSpot = await Spot.create({
             ownerId: user.id,
             address: address,
@@ -151,13 +190,7 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
         res.statusCode = 201
         res.json(newSpot)
 
-    } catch(err) {
-        next({
-            status: "error",
-            message: 'Could not create new spot',
-            details: err.errors ? err.errors.map(item => item.message).join(', ') : err.message
-        });
-    }
+
 });
 
 // Add an Image to a Spot based on the Spot's id

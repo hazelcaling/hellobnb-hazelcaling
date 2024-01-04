@@ -94,45 +94,6 @@ router.get(
     }
   );
 
-  // Get all Spots owned by the Current User
-  router.get(
-    '/spots', requireAuth,
-    async (req, res) => {
-      const { user } = req;
-
-      if (user) {
-        const spots = await Spot.findAll({
-          attributes: [
-            'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            // [Sequelize.fn('AVG',Sequelize.col('reviews.stars')), 'avgRating']
-            [Sequelize.literal('ROUND(AVG(reviews.stars), 1)'), 'avgRating']
-          ],
-          include: [
-            {model: Review, attributes: []},
-            // {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
-          ],
-          group: ['Spot.id'],
-        },
-          {where:{ownerId: user.id}});
-
-          const spotList = [];
-          for (let i = 0; i < spots.length; i++) {
-              const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
-              const spot = spots[i].toJSON()
-              spotList.push(spot)
-              spot.previewImage = images[0].url
-          }
-
-        return res.json({
-          Spots: spotList
-        });
-      }
-    }
-  );
-
-
-
-
 
 
 module.exports = router;
