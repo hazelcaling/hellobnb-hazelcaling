@@ -58,6 +58,7 @@ const validateReview = [
     handleValidationErrors
 ];
 
+
 // Get all Spots
 router.get('/', async (req, res) => {
     const spots = await Spot.findAll({
@@ -117,7 +118,7 @@ router.get(
         const spots = await Spot.findAll({
           attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            [Sequelize.fn('AVG',Sequelize.col('reviews.stars')), 'avgRating']
+            [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
 
           ],
           include: [
