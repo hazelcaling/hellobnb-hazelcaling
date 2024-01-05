@@ -19,6 +19,7 @@ const validateReviewEdit = [
     handleValidationErrors
 ];
 
+
 // Get all Reviews of the Current User
 router.get('/current', requireAuth, async (req, res) => {
     const reviews = await Review.findAll({
@@ -43,14 +44,14 @@ router.get('/current', requireAuth, async (req, res) => {
 });
 
 // Add an Image to a Review based on the Review's id
-router.post('/:reviewId/images', async (req, res) => {
-    const review = await Review.findOne({where: {id: req.params.reviewId}});
-    const review1 = await Review.findByPk(req.params.reviewId, {include: [{model: Image, as: 'ReviewImages'}]})
-    if (review1.ReviewImages.length >= 10) return res.status(403).json({message: "Maximum number of images for this resource was reached"})
+router.post('/:reviewId/images', requireAuth, async (req, res) => {
+    const review = await Review.findOne({include: [{model: Image, as: 'ReviewImages'}], where: {id: req.params.reviewId}});
+    if (!review) return res.status(404).json({ message: "Review couldn't be found"})
+    if (review) {
+        const numImages = review.toJSON().ReviewImages.length
+        if (numImages >= 10) return res.status(403).json({message: "Maximum number of images for this resource was reached"})
+    }
 
-    if (!review) return res.status(404).json({message: "Review couldn't be found" });
-
-    if (req.user)
     if (req.user.id !== review.userId) return res.status(403).json({message: 'Forbidden'});
 
     const newImg = await Image.create({
