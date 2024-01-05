@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Review, { foreignKey: 'userId', onDelete: 'cascade', hooks: true });
       User.hasMany(models.Booking, { foreignKey: 'userId', onDelete: 'cascade', hooks: true });
     }
+
   };
+
 
   User.init(
     {
@@ -23,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
             if (Validator.isEmail(value)) {
               throw new Error("Cannot be an email.");
             }
-          }
+          },
+
         }
       },
       email: {
@@ -32,7 +35,8 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         validate: {
           len: [3, 256],
-          isEmail: true
+          isEmail: true,
+
         }
       },
       hashedPassword: {

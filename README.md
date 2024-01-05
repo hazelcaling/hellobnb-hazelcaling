@@ -58,7 +58,7 @@ correct role(s) or permission(s).
 
 Returns the information about the current user that is logged in.
 
-* Require Authentication: true || false from James notes
+* Require Authentication: false
 * Request
   * Method: `GET`
   * URL: `/api/session`
