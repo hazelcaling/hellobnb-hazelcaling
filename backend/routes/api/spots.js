@@ -43,7 +43,6 @@ const validateSpot = [
       .exists({ checkFalsy: true })
       .notEmpty()
       .withMessage('Price per day is required'),
-
     handleValidationErrors
 ];
 const validateReview = [
@@ -113,34 +112,20 @@ router.get(
     '/current', requireAuth,
     async (req, res) => {
       const { user } = req;
-
-      if (user) {
-        const spots = await Spot.findAll({
-          attributes: [
-            'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
-
-          ],
-          include: [
-            {model: Review, attributes: []},
-            // {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
-          ],
-          group: ['Spot.id'],
+      const spots = await Spot.findAll({
+        attributes: {
+            include: [
+                [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
+                [sequelize.fn('GROUP_CONCAT', sequelize.col('url')), 'previewImage'],
+            ]
         },
-          {where:{ownerId: user.id}});
-
-          const spotList = [];
-          for (let i = 0; i < spots.length; i++) {
-              const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
-              const spot = spots[i].toJSON()
-              spotList.push(spot)
-              spot.previewImage = images[0].url
-          }
-
-        return res.json({
-          Spots: spotList
-        });
-      }
+        include: [
+            {model: Review, attributes: []},
+            {model: Image, as: 'SpotImages', attributes: []}
+        ],
+        where: {ownerId: user.id}
+      })
+      res.json({Spots: spots})
     }
   );
 
@@ -150,11 +135,12 @@ router.get('/:spotId', async (req, res) => {
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"});
 
     const spotDetails = await Spot.findOne({
-        attributes: [
-            'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            [Sequelize.fn('COUNT', Sequelize.col('reviews.id')), 'numReviews'],
-            [Sequelize.fn('AVG', sequelize.col('stars')), 'avgRating']
-        ],
+        attributes: {
+            include: [
+                 [Sequelize.fn('COUNT', sequelize.col('reviews.id')), 'numReviews'],
+                 [sequelize.fn('AVG', sequelize.col('stars')), 'avgStarRating'],
+            ]
+        },
         include: [
             { model: Review, attributes: []},
             {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
@@ -169,8 +155,6 @@ router.get('/:spotId', async (req, res) => {
 router.post('/', requireAuth, validateSpot, async (req, res, next) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
     const { user } = req;
-
-
         const newSpot = await Spot.create({
             ownerId: user.id,
             address: address,
@@ -185,8 +169,6 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
         })
         res.statusCode = 201
         res.json(newSpot)
-
-
 });
 
 // Add an Image to a Spot based on the Spot's id
@@ -211,7 +193,7 @@ router.post('/:spotId/images', requireAuth, async (req, res) => {
 // Edit a Spot
 router.put('/:spotId', requireAuth, validateSpot, async (req, res) => {
     const {user} = req
-    const spot = await Spot.findOne({where: {id: req.params.spotId}});
+    const spot = await Spot.findByPk(req.params.spotId)
     if (!spot) return res.status(404).json({ "message": "Spot couldn't be found" })
     if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'})
 
@@ -233,27 +215,22 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res) => {
             }
         })
 
-        const updatedSpot = await Spot.findOne({where: {id: req.params.spotId}})
+        const updatedSpot = await Spot.findByPk(req.params.spotId)
 
         res.json(updatedSpot)
 
     } catch(err) {
-        next({
-            status: "not-found",
-            message: 'Could not update new spot',
-            details: err.errors ? err.errors.map(item => item.message).join(', ') : err.message
-        });
+        console.error('Error updating spot')
     }
 });
 
 // Delete a Spot
-router.delete('/:spotId', requireAuth,async (req, res) => {
-    const spot = await Spot.findOne({where: {id: req.params.spotId}})
+router.delete('/:spotId', requireAuth, async (req, res) => {
+    const spot = await Spot.findByPk(req.params.spotId)
     if (!spot) res.status(404).json({ "message": "Spot couldn't be found" });
     const { user } = req;
     if (user) {
         const id = req.params.spotId
-        const spot = await Spot.findOne({where: {id: id}});
         if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'})
         await Spot.destroy({where: {id: id}});
         res.json({ "message": "Successfully deleted" })
