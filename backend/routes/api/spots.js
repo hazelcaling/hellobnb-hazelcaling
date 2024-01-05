@@ -63,7 +63,8 @@ router.get('/', async (req, res) => {
     const spots = await Spot.findAll({
         attributes: [
             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-            [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
+            // [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
+            [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('stars')), 1), 'avgRating']
         ],
         include: [
             { model: Review, attributes: []},
@@ -115,8 +116,9 @@ router.get(
       const spots = await Spot.findAll({
         attributes: {
             include: [
-                [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
-                [sequelize.fn('GROUP_CONCAT', sequelize.col('url')), 'previewImage'],
+                // [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
+                [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('stars')), 1), 'avgRating']
+                [sequelize.fn('STRING_AGG', sequelize.col('url')), 'previewImage'],
             ]
         },
         include: [
@@ -137,8 +139,9 @@ router.get('/:spotId', async (req, res) => {
     const spotDetails = await Spot.findOne({
         attributes: {
             include: [
-                 [Sequelize.fn('COUNT', sequelize.col('reviews.id')), 'numReviews'],
-                 [sequelize.fn('AVG', sequelize.col('stars')), 'avgStarRating'],
+                 [Sequelize.fn('COUNT', sequelize.col('spotId')), 'numReviews'],
+                //  [sequelize.fn('AVG', sequelize.col('stars')), 'avgStarRating'],
+                [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('stars')), 1), 'avgRating']
             ]
         },
         include: [
