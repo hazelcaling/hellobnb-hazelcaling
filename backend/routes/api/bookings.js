@@ -1,9 +1,10 @@
 const express = require('express');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { Booking, User, Spot, Image } = require('../../db/models');
 const router = express.Router();
 
 // Get all of the Current User's Bookings
-router.get('/current', async (req, res) => {
+router.get('/current', requireAuth, async (req, res) => {
     const { user } = req;
         const userBookings = await Booking.findAll({
             where: {

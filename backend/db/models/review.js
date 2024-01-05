@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'Review text is required'
         }
-
       }
     },
     stars: {
