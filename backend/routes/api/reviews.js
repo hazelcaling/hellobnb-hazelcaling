@@ -65,7 +65,7 @@ router.post('/:reviewId/images', requireAuth, async (req, res) => {
 })
 
 // Edit a Review
-router.put('/:reviewId', validateReviewEdit , async (req, res, next) => {
+router.put('/:reviewId', requireAuth, validateReviewEdit , async (req, res, next) => {
     const review = await Review.findByPk(req.params.reviewId);
     if (!review) return res.status(404).json({ "message": "Review couldn't be found" })
     if (req.user.id !== review.userId) return res.status(403).json({message: 'Forbidden'});
@@ -96,7 +96,7 @@ router.put('/:reviewId', validateReviewEdit , async (req, res, next) => {
 });
 
 // Delete a Review
-router.delete('/:reviewId', async (req, res) => {
+router.delete('/:reviewId', requireAuth, async (req, res) => {
     const { reviewId } = req.params
     const review = await Review.findByPk(reviewId);
 
