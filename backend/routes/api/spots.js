@@ -280,7 +280,7 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res) =>
 
 
 // Get all Bookings for a Spot based on the Spot's id
-router.get('/:spotId/bookings', async (req, res) => {
+router.get('/:spotId/bookings', requireAuth, async (req, res) => {
     const {spotId} = req.params;
     const {user} = req;
     const spot = await Spot.findByPk(spotId);
@@ -294,6 +294,7 @@ router.get('/:spotId/bookings', async (req, res) => {
             }
         ]
     });
+
     const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate']},{ where: {spotId: spotId}})
 
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
@@ -307,7 +308,7 @@ router.get('/:spotId/bookings', async (req, res) => {
 })
 
 // Create a Booking from a Spot based on the Spot's id
-router.post('/:spotId/bookings', async (req, res) => {
+router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     const {spotId} = req.params;
     const {currentUser} = req;
     const { startDate, endDate } = req.body;
