@@ -125,16 +125,18 @@ router.get(
             {model: Review, attributes: []},
             {model: Image, as: 'previewImage', attributes: ['url']}
         ],
-        group: ['Spot.id', 'previewImage.id'],
+        group: ['spot.id'],
         where: {ownerId: user.id}
       })
 
         const spotList = [];
         for (let i = 0; i < spots.length; i++) {
+        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
         const spot = spots[i].toJSON()
         spotList.push(spot)
-        spot.previewImage = spot.previewImage[0].url
+        spot.previewImage = images[0].url
     }
+    console.log(spotList)
 
       res.json({Spots: spotList})
     }
@@ -265,12 +267,13 @@ router.get('/:spotId/reviews', async (req, res) => {
 router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res) => {
     const { spotId } = req.params
     const { user } = req
-    const spot = await Spot.findOne({where: {id: spotId}});
-    const review = await Review.findOne({where: {spotId: spotId}});
+    const spot = await Spot.findOne({where: {id: spotId}}, {include: [{model: Review}]});
+    // const review = await Review.findOne({where: {spotId: spotId}});
+    console.log(spot)
 
     if (!spot) return res.status(404).json({ message: "Spot couldn't be found" })
     if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'});
-    if (review) return res.status(500).json({ message: "User already has a review for this spot" })
+    if (spot.Review) return res.status(500).json({ message: "User already has a review for this spot" })
         const newReview = await Review.create({
         userId: user.id,
         spotId: spotId,
