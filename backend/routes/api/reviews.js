@@ -29,7 +29,7 @@ router.get('/current', requireAuth, async (req, res) => {
             include: [
                 {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
             ]},
-                {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
+                {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {userId: req.user.id}})
 
     const reviewList = [];
     for (let i = 0; i < reviews.length; i++) {
@@ -60,10 +60,9 @@ router.post('/:reviewId/images', requireAuth, async (req, res) => {
         url: req.body.url,
         preview: req.body.preview
     });
+
     res.json({id: newImg.id, url: newImg.url})
 })
-
-
 
 // Edit a Review
 router.put('/:reviewId', validateReviewEdit , async (req, res, next) => {

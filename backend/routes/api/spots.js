@@ -254,7 +254,7 @@ router.get('/:spotId/reviews', async (req, res) => {
     const spot = await Spot.findOne({where: {id: spotId}});
     const review = await Review.findAll({
         include: [{model: User, attributes: ['id', 'firstName', 'lastName']},
-        {model: Image, as: 'ReviewImages'}]},{where: {spotId: spotId}});
+        {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {spotId: spotId}});
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
     res.json({Reviews: review})
 });
@@ -267,7 +267,6 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res) =>
     const review = await Review.findOne({where: {spotId: spotId}});
 
     if (!spot) return res.status(404).json({ message: "Spot couldn't be found" })
-    // if (!user) return res.status(403).json({message: 'Login required'});
     if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'});
     if (review) return res.status(500).json({ message: "User already has a review for this spot" })
         const newReview = await Review.create({
