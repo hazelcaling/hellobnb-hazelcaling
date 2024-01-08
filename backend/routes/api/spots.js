@@ -158,6 +158,7 @@ router.get('/:spotId', async (req, res) => {
             {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
             {model: User, as: 'Owner', attributes: ['id', 'firstName', 'lastName']},
         ],
+        group: ['Spot.id', 'previewImage.id'],
         where: {id: req.params.spotId}
     })
     res.json(spotDetails)
