@@ -13,25 +13,24 @@ router.get('/current', requireAuth, async (req, res) => {
             include: [
                 {
                     model: Spot,
-                    attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price' ],
-                    // include: [
-                    //     {
-                    //         model: Image,
-                    //         attributes: ['url'],
-                    //         as:'previewImage'
-                    //     }
-                    // ]
+                    attributes:{ exclude: ['createdAt', 'updatedAt']},
+                    include: [
+                        {
+                            model: Image,
+                            attributes: ['url'],
+                            as:'previewImage'
+                        }
+                    ]
                 }
             ]
         })
 
         const bookings = [];
         for (let i = 0; i < userBookings.length; i++) {
-        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
-        const booking = userBookings[i].toJSON()
-        bookings.push(booking)
-        booking.Spot.previewImage = images[0].url
-    }
+            const booking = userBookings[i].toJSON()
+            bookings.push(booking)
+            booking.Spot.previewImage = booking.Spot.previewImage[0].url
+        }
 
         res.json({Bookings: bookings})
 });
