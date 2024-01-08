@@ -125,7 +125,7 @@ router.get(
             {model: Review, attributes: []},
             {model: Image, as: 'previewImage', attributes: ['url']}
         ],
-        group: ['Spot.id'],
+        group: ['Spot.id', 'previewImage.id'],
         where: {ownerId: user.id}
       })
 
