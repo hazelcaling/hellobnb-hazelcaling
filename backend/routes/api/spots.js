@@ -125,6 +125,7 @@ router.get(
             {model: Review, attributes: []},
             {model: Image, as: 'previewImage', attributes: ['url']}
         ],
+        group: ['Spot.id'],
         where: {ownerId: user.id}
       })
 
@@ -318,7 +319,7 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Spot must not belong to the current user'});
 
     // Check if the spot is already booked for the specified date
-    const conflictingBooking = await Booking.findOne({
+    const spotBooked = await Booking.findOne({
         where: {
             spotId,
             startDate: {
@@ -330,10 +331,37 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
         }
     });
 
-    if (conflictingBooking) res.status(403).json({
+    // check for conflicting bookings
+    const conflictingBooking = await Booking.findOne({
+        where: {
+            [Sequelize.Op.or]: [
+                {
+                    startDate: {
+                        [Sequelize.Op.lte]: new Date(endDate)
+                    },
+                    endDate: {
+                        [Sequelize.Op.gte]: new Date(startDate)
+                    },
+                    startDate: {
+                        [Sequelize.Op.eq]: new Date(startDate)
+                    },
+                    endDate: {
+                        [Sequelize.Op.eq]: new Date(endDate)
+                    }
+                }
+            ]
+        }
+    })
+
+    if (conflictingBooking) return res.status(403).json({message: "Date conflicts with an existing booking"})
+
+    if (spotBooked) res.status(403).json({
         "message": "Sorry, this spot is already booked for the specified dates"
     })
 
+    if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
+
+    if (new Date(endDate) < new Date(startDate)) return res.status(403).json({message: "End date cannot be before start date"})
 
     const newBooking = await Booking.create({
         userId: req.user.id,
