@@ -254,7 +254,7 @@ router.get('/:spotId/reviews', async (req, res) => {
     const spot = await Spot.findOne({where: {id: spotId}});
     const review = await Review.findAll({
         include: [{model: User, attributes: ['id', 'firstName', 'lastName']},
-        {model: Image, as: 'ReviewImages'}]},{where: {spotId: spotId}});
+        {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {spotId: spotId}});
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
     res.json({Reviews: review})
 });
@@ -267,7 +267,6 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res) =>
     const review = await Review.findOne({where: {spotId: spotId}});
 
     if (!spot) return res.status(404).json({ message: "Spot couldn't be found" })
-    // if (!user) return res.status(403).json({message: 'Login required'});
     if (user.id !== spot.ownerId) return res.status(403).json({message: 'Forbidden'});
     if (review) return res.status(500).json({ message: "User already has a review for this spot" })
         const newReview = await Review.create({
@@ -281,7 +280,7 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res) =>
 
 
 // Get all Bookings for a Spot based on the Spot's id
-router.get('/:spotId/bookings', async (req, res) => {
+router.get('/:spotId/bookings', requireAuth, async (req, res) => {
     const {spotId} = req.params;
     const {user} = req;
     const spot = await Spot.findByPk(spotId);
@@ -295,6 +294,7 @@ router.get('/:spotId/bookings', async (req, res) => {
             }
         ]
     });
+
     const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate']},{ where: {spotId: spotId}})
 
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
@@ -308,7 +308,7 @@ router.get('/:spotId/bookings', async (req, res) => {
 })
 
 // Create a Booking from a Spot based on the Spot's id
-router.post('/:spotId/bookings', async (req, res) => {
+router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     const {spotId} = req.params;
     const {currentUser} = req;
     const { startDate, endDate } = req.body;

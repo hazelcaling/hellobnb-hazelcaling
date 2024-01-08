@@ -29,7 +29,7 @@ router.get('/current', requireAuth, async (req, res) => {
             include: [
                 {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
             ]},
-                {model: Image, as: 'ReviewImages'}]},{where: {userId: req.user.id}})
+                {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {userId: req.user.id}})
 
     const reviewList = [];
     for (let i = 0; i < reviews.length; i++) {
@@ -60,13 +60,12 @@ router.post('/:reviewId/images', requireAuth, async (req, res) => {
         url: req.body.url,
         preview: req.body.preview
     });
+
     res.json({id: newImg.id, url: newImg.url})
 })
 
-
-
 // Edit a Review
-router.put('/:reviewId', validateReviewEdit , async (req, res, next) => {
+router.put('/:reviewId', requireAuth, validateReviewEdit , async (req, res, next) => {
     const review = await Review.findByPk(req.params.reviewId);
     if (!review) return res.status(404).json({ "message": "Review couldn't be found" })
     if (req.user.id !== review.userId) return res.status(403).json({message: 'Forbidden'});
@@ -97,7 +96,7 @@ router.put('/:reviewId', validateReviewEdit , async (req, res, next) => {
 });
 
 // Delete a Review
-router.delete('/:reviewId', async (req, res) => {
+router.delete('/:reviewId', requireAuth, async (req, res) => {
     const { reviewId } = req.params
     const review = await Review.findByPk(reviewId);
 
