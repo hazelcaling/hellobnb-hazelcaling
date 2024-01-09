@@ -5,6 +5,7 @@ const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize');
+const spot = require('../../db/models/spot');
 
 
 const validateSpot = [
@@ -73,12 +74,22 @@ router.get('/', async (req, res) => {
         group: ['Spot.id']
     })
 
+    // const spotList = [];
+    // for (let i = 0; i < spots.length; i++) {
+    //     const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+    //     const spot = spots[i].toJSON()
+    //     spotList.push(spot)
+    //     spot.previewImage = images[0].url
+    // }
     const spotList = [];
     for (let i = 0; i < spots.length; i++) {
-        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
         const spot = spots[i].toJSON()
         spotList.push(spot)
-        spot.previewImage = images[0].url
+        if (spot.previewImage.length === 0) {
+            spot.previewImage = null;
+        } else {
+            spot.previewImage = spot.previewImage[0].url
+        }
     }
 
     // Extract query parameters
@@ -88,7 +99,7 @@ router.get('/', async (req, res) => {
 
     // Paginate results
     const startIndex = (page - 1) * size;
-    const paginatedSpots = filteredSpots.slice(startIndex, startIndex + size);
+    const paginatedSpots = spotList.slice(startIndex, startIndex + size);
 
     res.json({
         'Spots': paginatedSpots
@@ -116,16 +127,18 @@ router.get(
         where: {ownerId: user.id}
       })
 
-        const spotList = [];
-        for (let i = 0; i < spots.length; i++) {
-        const images = await Image.findAll({where: {imageableType: 'Spot'}, attributes: ['url']})
+    const spotList = [];
+    for (let i = 0; i < spots.length; i++) {
         const spot = spots[i].toJSON()
         spotList.push(spot)
-        spot.previewImage = images[0].url
+        if (spot.previewImage.length === 0) {
+            spot.previewImage = null;
+        } else {
+            spot.previewImage = spot.previewImage[0].url
+        }
     }
-    console.log(spotList)
-
       res.json({Spots: spotList})
+
     }
   );
 
@@ -147,7 +160,7 @@ router.get('/:spotId', async (req, res) => {
             {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
             {model: User, as: 'Owner', attributes: ['id', 'firstName', 'lastName']},
         ],
-        group: ['Spot.id', 'previewImage.id'],
+        group: ['Spot.id'],
         where: {id: req.params.spotId}
     })
     res.json(spotDetails)
