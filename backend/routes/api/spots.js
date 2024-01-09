@@ -84,20 +84,7 @@ router.get('/', async (req, res) => {
     // Extract query parameters
     const page = parseInt(req.query.page) || 1;
     const size = parseInt(req.query.size) || 20;
-    const minLat = parseFloat(req.query.minLat);
-    const maxLat = parseFloat(req.query.minLat);
-    const minLng = parseFloat(req.query.minLng);
-    const maxLng = parseFloat(req.query.minLng);
-    const minPrice = parseFloat(req.query.minPrice) || 0;
-    const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
 
-    // Apply filters
-    const filteredSpots = spotList.filter(spot => {
-        const withinLatRange = (!minLat || spot.lat >= minLat) && (!maxLat || spot.lat <= maxLat);
-        const withinLngRange = (!minLng || spot.lng >= minLng) && (!maxLng || spot.lat <= maxLng);
-        const withinPriceRange = spot.price >= minPrice && spot.price <= maxPrice;
-        return withinLatRange && withinLngRange && withinPriceRange
-    });
 
     // Paginate results
     const startIndex = (page - 1) * size;
