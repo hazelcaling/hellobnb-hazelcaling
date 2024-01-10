@@ -1,7 +1,9 @@
 const express = require('express');
+const {Sequelize} = require('sequelize')
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { Booking, User, Spot, Image } = require('../../db/models');
 const router = express.Router();
+const { Op } = require('sequelize');
 
 // Get all of the Current User's Bookings
 router.get('/current', requireAuth, async (req, res) => {
@@ -40,9 +42,28 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
     const { bookingId } = req.params
     const { startDate, endDate } = req.body
     const booking = await Booking.findByPk(bookingId)
-    if (req.user.id !== booking.userId) return res.status(403).json('Forbidden')
+    const currentDate = new Date()
+
     if (!booking) return res.status(404).json({message: "Booking couldn't be found"});
-    if (new Date(booking.endDate) < new Date()) return res.status(403).json({message: "Past bookings can't be modified"});
+    if (req.user.id !== booking.userId) return res.status(403).json('Forbidden')
+    if (new Date(startDate) < currentDate || new Date(endDate) < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
+
+    // Check existing booking
+    const existingBooking = await Booking.findOne({
+        where: {
+            spotId: booking.spotId,
+            id: {[Sequelize.Op.ne]: bookingId},
+            [Sequelize.Op.or]: [
+                {startDate: {[Sequelize.Op.between]: [startDate, endDate]}},
+                {endDate: {[Sequelize.Op.between]: [startDate, endDate]}}
+            ]
+        }
+    });
+
+    if (existingBooking) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
+    if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
+    if (new Date(endDate) < new Date(startDate)) return res.status(403).json({message: "End date cannot be before start date"})
+
     await booking.update({
         startDate,
         endDate
