@@ -25,14 +25,19 @@ const validateSpot = [
     check('lat')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .withMessage('Latitude is not valid'),
+      .withMessage('Latitude is not valid')
+      .isFloat({ min: -90, max: 90})
+      .withMessage('Latitude must be within -90 and 90'),
     check('lng')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .withMessage('Longtitude is not valid'),
+      .withMessage('Longtitude is not valid')
+      .isFloat({ min: -180, max: 180})
+      .withMessage('Longtitude must be within -180 and 180'),
     check('name')
       .exists({ checkFalsy: true })
       .notEmpty()
+      .isLength({min: 1, max: 50})
       .withMessage('Name must be less than 50 characters'),
     check('description')
       .exists({ checkFalsy: true })
@@ -41,10 +46,9 @@ const validateSpot = [
     check('price')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .withMessage('Price per day is required'),
-      check('stars')
-      .exists({ checkFalsy: true })
-      .notEmpty(),
+      .withMessage('Price per day is required')
+      .isFloat({ min: 0})
+      .withMessage('Price per day must be a positive number'),
     handleValidationErrors
 ];
 
@@ -184,7 +188,7 @@ router.get(
             {model: Review, attributes: []},
             {model: Image, as: 'previewImage', attributes: ['url']}
         ],
-        group: ['Spot.id'],
+        group: ['Spot.id', 'previewImage.id'],
         where: {ownerId: user.id}
       })
 
@@ -221,7 +225,7 @@ router.get('/:spotId', async (req, res) => {
             {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
             {model: User, as: 'Owner', attributes: ['id', 'firstName', 'lastName']},
         ],
-        group: ['Spot.id'],
+        group: ['Spot.id', 'SpotImages.id'],
         where: {id: req.params.spotId}
     })
 
