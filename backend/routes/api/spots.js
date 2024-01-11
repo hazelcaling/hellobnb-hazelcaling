@@ -225,7 +225,7 @@ router.get('/:spotId', async (req, res) => {
             {model: Image, as: 'SpotImages', attributes: ['id', 'url', 'preview']},
             {model: User, as: 'Owner', attributes: ['id', 'firstName', 'lastName']},
         ],
-        group: ['Spot.id', 'SpotImages.id'],
+        group: ['Spot.id', 'SpotImages.id', 'Owner.id'],
         where: {id: req.params.spotId}
     })
 
@@ -324,8 +324,12 @@ router.get('/:spotId/reviews', async (req, res) => {
     const { spotId } = req.params
     const spot = await Spot.findOne({where: {id: spotId}});
     const review = await Review.findAll({
-        include: [{model: User, attributes: ['id', 'firstName', 'lastName']},
-        {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {spotId: spotId}});
+        include: [
+            {model: User, attributes: ['id', 'firstName', 'lastName']},
+            {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}],
+            where: {spotId: spotId}
+        });
+
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
     res.json({Reviews: review})
 });
@@ -364,7 +368,7 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
         where: {spotId: req.params.spotId}
     });
 
-    const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate']},{ where: {spotId: req.params.spotId}})
+    const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate'], where: {spotId: req.params.spotId}})
 
     if (spot.ownerId !== user.id) {
         return res.json({Bookings: bookings})
@@ -384,7 +388,7 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Spot must not belong to the current user'});
 
     // Check if the spot is already booked for the specified date
-    const existingBooking = await Booking.findOne({
+    const existingBooking = await Booking.findAll({
         where: {
             spotId,
             [Sequelize.Op.or]: [

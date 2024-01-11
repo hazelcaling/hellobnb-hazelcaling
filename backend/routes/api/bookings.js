@@ -9,9 +9,6 @@ const { Op } = require('sequelize');
 router.get('/current', requireAuth, async (req, res) => {
     const { user } = req;
         const userBookings = await Booking.findAll({
-            where: {
-                userId: user.id
-            },
             include: [
                 {
                     model: Spot,
@@ -19,12 +16,17 @@ router.get('/current', requireAuth, async (req, res) => {
                     include: [
                         {
                             model: Image,
+                            as:'previewImage',
                             attributes: ['url'],
-                            as:'previewImage'
+                            limit: 1
                         }
                     ]
                 }
-            ]
+            ],
+            group: ['Booking.id', 'Spot.id'],
+            where: {
+                userId: user.id
+            },
         })
 
         const bookings = [];
@@ -45,7 +47,7 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
     const currentDate = new Date()
 
     if (!booking) return res.status(404).json({message: "Booking couldn't be found"});
-    if (req.user.id !== booking.userId) return res.status(403).json('Forbidden')
+    if (req.user.id !== booking.userId) return res.status(403).json({message: 'Forbidden'})
     if (new Date(startDate) < currentDate || new Date(endDate) < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
 
     // Check existing booking
