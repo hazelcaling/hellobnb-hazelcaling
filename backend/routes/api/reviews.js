@@ -26,10 +26,10 @@ router.get('/current', requireAuth, async (req, res) => {
         include: [
             {model: User, attributes: ['id', 'firstName', 'lastName']},
             {model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
-            include: [
-                {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
-            ]},
-                {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {userId: req.user.id}})
+                include: [{model: Image, as: 'previewImage', attributes: ['url'], limit: 1}]},
+            {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}],
+        where: {userId: req.user.id}
+        })
 
     const reviewList = [];
     for (let i = 0; i < reviews.length; i++) {
@@ -38,6 +38,12 @@ router.get('/current', requireAuth, async (req, res) => {
         reviewList.push(review)
         review.Spot.previewImage = images[0].url
     }
+
+    // const reviewOwner = [];
+    // for (let i = 0; i < reviews.length; i++) {
+    //     reviewOwner.push(reviews[i].userId)
+    // }
+
     res.json({
         "Reviews": reviewList
     })
