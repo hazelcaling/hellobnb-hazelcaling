@@ -368,7 +368,7 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
         where: {spotId: req.params.spotId}
     });
 
-    const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate']},{ where: {spotId: req.params.spotId}})
+    const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate'], where: {spotId: req.params.spotId}})
 
     if (spot.ownerId !== user.id) {
         return res.json({Bookings: bookings})
@@ -388,7 +388,7 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Spot must not belong to the current user'});
 
     // Check if the spot is already booked for the specified date
-    const existingBooking = await Booking.findOne({
+    const existingBooking = await Booking.findAll({
         where: {
             spotId,
             [Sequelize.Op.or]: [
