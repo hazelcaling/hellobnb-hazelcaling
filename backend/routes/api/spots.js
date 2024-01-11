@@ -324,8 +324,12 @@ router.get('/:spotId/reviews', async (req, res) => {
     const { spotId } = req.params
     const spot = await Spot.findOne({where: {id: spotId}});
     const review = await Review.findAll({
-        include: [{model: User, attributes: ['id', 'firstName', 'lastName']},
-        {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}]},{where: {spotId: spotId}});
+        include: [
+            {model: User, attributes: ['id', 'firstName', 'lastName']},
+            {model: Image, as: 'ReviewImages', attributes: ['id', 'url']}],
+            where: {spotId: spotId}
+        });
+
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
     res.json({Reviews: review})
 });
