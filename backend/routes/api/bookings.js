@@ -47,7 +47,7 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
     const currentDate = new Date()
 
     if (!booking) return res.status(404).json({message: "Booking couldn't be found"});
-    if (req.user.id !== booking.userId) return res.status(403).json('Forbidden')
+    if (req.user.id !== booking.userId) return res.status(403).json({message: 'Forbidden'})
     if (new Date(startDate) < currentDate || new Date(endDate) < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
 
     // Check existing booking
