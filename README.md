@@ -1,5 +1,7 @@
 # `hellobnb`
 
+Link to live site: https://hellobnb-hazelcaling.onrender.com
+
 ## Database Schema Design
 
 ![Alt text](./images/image.png)

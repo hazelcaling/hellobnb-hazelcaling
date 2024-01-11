@@ -42,8 +42,12 @@ const validateSpot = [
       .exists({ checkFalsy: true })
       .notEmpty()
       .withMessage('Price per day is required'),
+      check('stars')
+      .exists({ checkFalsy: true })
+      .notEmpty(),
     handleValidationErrors
 ];
+
 const validateReview = [
     check('review')
       .exists({ checkFalsy: true })
@@ -52,6 +56,7 @@ const validateReview = [
     check('stars')
       .exists({ checkFalsy: true })
       .notEmpty()
+      .isFloat({ min: 1, max: 5})
       .withMessage('Stars must be an integer from 1 to 5'),
     handleValidationErrors
 ];
@@ -77,6 +82,8 @@ router.get('/', async (req, res) => {
         for (let i = 0; i < spots.length; i++) {
             const spot = spots[i].toJSON()
             spotList.push(spot)
+            spot.avgRating = parseFloat(spot.avgRating)
+            if (!spot.avgRating) spot.avgRating = parseInt(0)
             if (spot.previewImage.length === 0) {
                 spot.previewImage = 'No image';
             } else {
@@ -105,10 +112,10 @@ router.get('/', async (req, res) => {
     //     maxLng = parseInt(maxLng)
 
     //     // build where clause based on params
-    //     const where = {};
+    //     let where = {};
 
     //     if (minLat && maxLat) {
-    //         where.lat = {[Sequelize.Op.between]: [minLat, maxLat]}
+    //         where.lat = {[Op.between]: [minLat, maxLat]}
     //     }
 
     //     if (minLng && maxLng) {
@@ -131,6 +138,7 @@ router.get('/', async (req, res) => {
     //             {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
     //         ],
     //         group: ['Spot.id']
+
     //     })
 
     //     const spotList = [];
@@ -144,12 +152,12 @@ router.get('/', async (req, res) => {
     //         }
     //     }
 
-    //     // Paginate results
-    //     const startIndex = (page - 1) * size;
-    //     const paginatedSpots = spotList.slice(startIndex, startIndex + size);
+    //     // // Paginate results
+    //     // const startIndex = (page - 1) * size;
+    //     // const paginatedSpots = spotList.slice(startIndex, startIndex + size);
 
     //     res.json({
-    //     'Spots': paginatedSpots
+    //     'Spots': spotList
     // })
 
     // } catch(error) {
@@ -176,7 +184,7 @@ router.get(
             {model: Review, attributes: []},
             {model: Image, as: 'previewImage', attributes: ['url']}
         ],
-        group: ['spot.id'],
+        group: ['Spot.id'],
         where: {ownerId: user.id}
       })
 
@@ -319,7 +327,7 @@ router.get('/:spotId/reviews', async (req, res) => {
 });
 
 // Create a Review for a Spot based on the Spot's id
-router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res) => {
+router.post('/:spotId/reviews', requireAuth, validateReview,  async (req, res) => {
     const { spotId } = req.params
     const { user } = req
     const spot = await Spot.findOne({where: {id: spotId}});
