@@ -2,7 +2,7 @@ const express = require('express');
 const { Spot, Review, Image, User, Booking, Sequelize, sequelize } = require('../../db/models');
 const router = express.Router();
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { check } = require('express-validator');
+const { check, query} = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize');
 
@@ -65,29 +65,65 @@ const validateReview = [
     handleValidationErrors
 ];
 
+const validateQueryParams = [
+    query('page').optional().isFloat({min: 1}).withMessage('Page must be greater than or equal to 1'),
+    query('size').optional().isFloat({min: 1}).withMessage('Size must be greater than or equal to 1'),
+    query('minLat').optional().isFloat({min: -90, max: 90}).withMessage('Minimum latitude is invalid'),
+    query('maxLat').optional().isFloat({min: -90, max: 90}).withMessage('Maximum latitude is invalid'),
+    query('minLng').optional().isFloat({min: -180, max: 180}).withMessage('Minimum longitude is invalid'),
+    query('maxLng').optional().isFloat({min: -180, max: 180}).withMessage('Maximum longitude is invalid'),
+    query('minPrice').optional().isFloat({min: 0}).withMessage('Minimum price must be greater than or equal to 0'),
+    query('maxPrice').optional().isFloat({min: 0}).withMessage('Maximum price must be greater than or equal to 0'),
+    handleValidationErrors
+  ];
+
+
+const validatePagination = [
+    query('page').optional().isInt({min: 1, max: 10}).withMessage('Page must be greater than or equal to 1').toInt(),
+    query('size').optional().isInt({min: 1, max: 20}).withMessage('Size must be greater than or equal to 1').toInt(),
+    handleValidationErrors
+];
+
 
 // Get all Spots
-router.get('/', async (req, res) => {
+router.get('/', validateQueryParams, validatePagination, async (req, res) => {
 
+        const where = {}
+
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 20;
+        const minLat = parseFloat(req.query.minLat)
+        const maxLat = parseFloat(req.query.maxLat)
+        const minLng = parseFloat(req.query.minLng)
+        const maxLng = parseFloat(req.query.maxLng)
+        const minPrice = parseFloat(req.query.minPrice)
+        const maxPrice = parseFloat(req.query.maxPrice)
+
+        if (minLat || maxLat) where.lat = {[Op.between]: [Math.max(minLat, -90), Math.min(maxLat, 90)]}
+        if (minLng || maxLng) where.lng = {[Op.between]: [Math.max(minLng, -180), Math.min(maxLng, 180)]}
+        if (minPrice || maxPrice) where.price = {[Op.between]: [Math.max(minPrice, 0), Math.min(maxPrice, 1000000)]}
         const spots = await Spot.findAll({
-        attributes: [
+            attributes: [
                 'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-                // [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
-                [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('stars')), 1), 'avgRating']
+                [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('Reviews.stars')), 1), 'avgRating'],
             ],
             include: [
                 { model: Review, attributes: []},
                 {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
             ],
-            group: ['Spot.id']
+            where,
+            group: ['Spot.id'],
+            order: ['id'],
+            limit: size,
+            offset: (page - 1) * size,
+            subQuery: false
         })
+
 
         const spotList = [];
         for (let i = 0; i < spots.length; i++) {
             const spot = spots[i].toJSON()
             spotList.push(spot)
-            spot.avgRating = parseFloat(spot.avgRating)
-            if (!spot.avgRating) spot.avgRating = parseInt(0)
             if (spot.previewImage.length === 0) {
                 spot.previewImage = 'No image';
             } else {
@@ -95,80 +131,9 @@ router.get('/', async (req, res) => {
             }
         }
 
-        res.json(spotList)
-
-    // try {
-    //     // default page = 1, size 20
-    //     let { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0} = req.query;
-
-    //     // ensure page, size are within the range
-    //     // page min 1, max 10    size min 1 max 20
-    //     page = Math.min(Math.max(parseInt(page), 1, 10))
-    //     size = Math.min(Math.max(parseInt(size), 1, 20))
-
-    //     // ensure minPrice and maxPrice are atleast 0
-    //     minPrice = Math.max(parseInt(minPrice), 0);
-    //     maxPrice = Math.max(parseInt(maxPrice), 0)
-
-    //     minLat = parseInt(minLat)
-    //     maxLat = parseInt(maxLat)
-    //     minLng = parseInt(minLng)
-    //     maxLng = parseInt(maxLng)
-
-    //     // build where clause based on params
-    //     let where = {};
-
-    //     if (minLat && maxLat) {
-    //         where.lat = {[Op.between]: [minLat, maxLat]}
-    //     }
-
-    //     if (minLng && maxLng) {
-    //         where.lng = {[Sequelize.Op.between]: [minLng, maxLng]}
-    //     }
-
-    //     if (minPrice && maxPrice) {
-    //         where.price = {[Sequelize.Op.between]: [minPrice, maxPrice]}
-    //     }
-
-    //     const spots = await Spot.findAll({
-    //         where: where,
-    //         attributes: [
-    //             'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-    //             // [sequelize.fn('AVG', sequelize.col('stars')), 'avgRating'],
-    //             [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('stars')), 1), 'avgRating']
-    //         ],
-    //         include: [
-    //             { model: Review, attributes: []},
-    //             {model: Image, as: 'previewImage', attributes: ['url'], limit: 1}
-    //         ],
-    //         group: ['Spot.id']
-
-    //     })
-
-    //     const spotList = [];
-    //     for (let i = 0; i < spots.length; i++) {
-    //         const spot = spots[i].toJSON()
-    //         spotList.push(spot)
-    //         if (spot.previewImage.length === 0) {
-    //             spot.previewImage = 'No image';
-    //         } else {
-    //             spot.previewImage = spot.previewImage[0].url
-    //         }
-    //     }
-
-    //     // // Paginate results
-    //     // const startIndex = (page - 1) * size;
-    //     // const paginatedSpots = spotList.slice(startIndex, startIndex + size);
-
-    //     res.json({
-    //     'Spots': spotList
-    // })
-
-    // } catch(error) {
-    //    console.error(error)
-    //    return res.json('Hello')
-    // }
-
+        res.json({
+        'Spots': spotList
+    })
 });
 
 // Get all Spots owned by the Current User
@@ -359,13 +324,15 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
     const spot = await Spot.findByPk(req.params.spotId)
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"})
     const ownerBookings = await Booking.findAll({
+
      include: [
             {
                 model: User,
                 attributes: ['id', 'firstName', 'lastName']
             }
         ],
-        where: {spotId: req.params.spotId}
+    attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
+    where: {spotId: req.params.spotId}
     });
 
     const bookings = await Booking.findAll({attributes: ['spotId', 'startDate', 'endDate'], where: {spotId: req.params.spotId}})
@@ -385,16 +352,30 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     const spot = await Spot.findByPk(spotId);
 
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"});
-    if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Spot must not belong to the current user'});
+    if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Forbidden'});
 
     // Check if the spot is already booked for the specified date
     const existingBooking = await Booking.findAll({
         where: {
             spotId,
             [Sequelize.Op.or]: [
+                // Start on existing start date
+                {startDate: {[Sequelize.Op.eq]: startDate}},
+                // Start on existing end date
+                {startDate: {[Sequelize.Op.eq]: endDate}},
+                // End on existing start date
+                {endDate: {[Sequelize.Op.eq]: startDate}},
+                // End on existing end date
+                {endDate: {[Sequelize.Op.eq]: endDate}},
+                // Start during existing booking
                 {startDate: {[Sequelize.Op.between]: [startDate, endDate]}},
-                {endDate: {[Sequelize.Op.between]: [startDate, endDate]}}
+                // End during existing booking
+                {endDate: {[Sequelize.Op.between]: [startDate, endDate]}},
+                // Dates within Existing booking
+                {startDate: {[Sequelize.Op.gte]: startDate}},
+                {endDate: {[Sequelize.Op.lte]: endDate}}
             ]
+
         }
     });
 
