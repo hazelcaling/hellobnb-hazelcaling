@@ -33,7 +33,11 @@ router.get('/current', requireAuth, async (req, res) => {
         for (let i = 0; i < userBookings.length; i++) {
             const booking = userBookings[i].toJSON()
             bookings.push(booking)
-            booking.Spot.previewImage = booking.Spot.previewImage[0].url
+            if (parseInt(booking.Spot.previewImage.length) === parseInt(0)) {
+                booking.Spot.previewImage = 'No image'
+            } else {
+                booking.Spot.previewImage = booking.Spot.previewImage[0].url
+            }
         }
 
         res.json({Bookings: bookings})
@@ -52,14 +56,14 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
 
     const withinExistingBooking = await Booking.findAll({
         where: {
-            spotId: spotId,
+            id: bookingId,
             [Op.and]: [{startDate: {[Op.lte]: startDate}},{endDate: {[Op.gte]: endDate}}]
         }
     })
 
     const existingBooking = await Booking.findAll({
         where: {
-            spotId: spotId,
+            id: bookingId,
             // [Op.or]: [{startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)}]
             [Op.or]: [
                 {startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)},
@@ -91,20 +95,6 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
                 }]
         }
     });
-    // // Check existing booking
-    // const existingBooking = await Booking.findOne({
-    //     where: {
-    //         spotId: booking.spotId,
-    //         id: {[Sequelize.Op.ne]: bookingId},
-    //         [Sequelize.Op.or]: [
-    //             {startDate: {[Sequelize.Op.between]: [startDate, endDate]}},
-    //             {endDate: {[Sequelize.Op.between]: [startDate, endDate]}},
-    //             // newly added below
-    //             // {startDate: {[Sequelize.Op.overlap]: [startDate, endDate]}},
-    //             // {endDate: {[Sequelize.Op.overlap]: [startDate, endDate]}},
-    //         ]
-    //     }
-    // });
 
     if (existingBooking.length > 0 || withinExistingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
     if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
