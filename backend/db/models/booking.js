@@ -24,14 +24,14 @@ module.exports = (sequelize, DataTypes) => {
     endDate: {
       type: DataTypes.DATE,
       allowNull: false,
-      validate: {
-        lteStartDate(value) {
-          if (new Date(this.endDate) <= this.startDate) {
-            throw new Error();
-          }
-        }
+      // validate: {
+      //   lteStartDate(value) {
+      //     if (new Date(this.endDate) <= this.startDate) {
+      //       throw new Error();
+      //     }
+      //   }
 
-      }
+      // }
     }
   }, {
     sequelize,

@@ -207,7 +207,10 @@ router.get('/:spotId', async (req, res) => {
         where: {id: req.params.spotId}
     })
 
-    res.json(spotDetails)
+    const spotres = spotDetails.toJSON()
+    spotres.numReviews = parseInt(spotres.numReviews)
+
+    res.json(spotres)
 
 });
 
@@ -366,17 +369,10 @@ router.post('/:spotId/bookings', handleValidationErrors, requireAuth, async (req
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"});
     if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Forbidden'});
 
-    const withinExistingBooking = await Booking.findAll({
-        where: {
-            spotId: spotId,
-            [Op.and]: [{startDate: {[Op.lte]: startDate}},{endDate: {[Op.gte]: endDate}}]
-        }
-    })
-
+    // Conflicting booking
     const existingBooking = await Booking.findAll({
         where: {
             spotId: spotId,
-            // [Op.or]: [{startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)}]
             [Op.or]: [
                 {startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)},
                 {
@@ -385,7 +381,7 @@ router.post('/:spotId/bookings', handleValidationErrors, requireAuth, async (req
                         [Op.gte]: new Date(endDate)
                     },
                     endDate: {
-                        [Op.gte]: endDate,
+                        [Op.gte]: new Date(endDate),
                     }
                 },
                 {
@@ -397,6 +393,7 @@ router.post('/:spotId/bookings', handleValidationErrors, requireAuth, async (req
                         [Op.lte]: new Date(endDate),
                     }
                 },
+                // Avoid end date during existing booking
                 {
                     startDate: {
                         [Op.gte]: new Date(startDate),
@@ -404,14 +401,23 @@ router.post('/:spotId/bookings', handleValidationErrors, requireAuth, async (req
                     endDate: {
                         [Op.lte]: new Date(endDate)
                     }
+                },
+                // Avoid end date during existing booking
+                {
+                    endDate: {
+                        [Op.gte]: new Date(endDate),
+                    },
+                    startDate: {
+                        [Op.lte]: new Date(endDate)
+                    }
                 }]
         }
     });
-
+    // res.json({exist: existingBooking.length})
 
     if (endDate < startDate) return res.status(403).json({message: "End date cannot be on or before start date"})
     if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
-    if (existingBooking.length > 0 || withinExistingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
+    if (existingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
 
     const newBooking = await Booking.create({
         userId: req.user.id,

@@ -52,19 +52,12 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
 
     if (!booking) return res.status(404).json({message: "Booking couldn't be found"});
     if (req.user.id !== booking.userId) return res.status(403).json({message: 'Forbidden'})
-    if (new Date(startDate) < currentDate || new Date(endDate) < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
 
-    const withinExistingBooking = await Booking.findAll({
-        where: {
-            id: bookingId,
-            [Op.and]: [{startDate: {[Op.lte]: startDate}},{endDate: {[Op.gte]: endDate}}]
-        }
-    })
 
     const existingBooking = await Booking.findAll({
         where: {
-            id: bookingId,
-            // [Op.or]: [{startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)}]
+            spotId: booking.spotId,
+            id: {[Op.ne]: parseInt(bookingId)},
             [Op.or]: [
                 {startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)},
                 {
@@ -92,13 +85,24 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
                     endDate: {
                         [Op.lte]: new Date(endDate)
                     }
+                },
+            // Avoid end date during existing booking
+                {
+                    endDate: {
+                        [Op.gte]: new Date(endDate),
+                    },
+                    startDate: {
+                        [Op.lte]: new Date(endDate)
+                    }
                 }]
         }
     });
+    // res.json(existingBooking.length)
 
-    if (existingBooking.length > 0 || withinExistingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
+    if (existingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
     if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
     if (new Date(endDate) < new Date(startDate)) return res.status(403).json({message: "End date cannot be before start date"})
+    if (startDate < currentDate || endDate < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
 
     await booking.update({
         startDate,
