@@ -53,12 +53,11 @@ router.get('/current', requireAuth, async (req, res) => {
 router.post('/:reviewId/images', requireAuth, async (req, res) => {
     const review = await Review.findOne({include: [{model: Image, as: 'ReviewImages'}], where: {id: req.params.reviewId}});
     if (!review) return res.status(404).json({ message: "Review couldn't be found"})
+    if (req.user.id !== review.userId) return res.status(403).json({message: 'Forbidden'});
     if (review) {
         const numImages = review.toJSON().ReviewImages.length
         if (numImages >= 10) return res.status(403).json({message: "Maximum number of images for this resource was reached"})
     }
-
-    if (req.user.id !== review.userId) return res.status(403).json({message: 'Forbidden'});
 
     const newImg = await Image.create({
         imageableId: req.params.reviewId,

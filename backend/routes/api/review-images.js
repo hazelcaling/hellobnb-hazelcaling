@@ -5,11 +5,12 @@ const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth')
 
 
 // Delete a Review Image
-router.delete('/:reviewImageId', requireAuth, async(req, res) => {
-    const img = await Image.findByPk(req.params.reviewImageId, {include: [{ model: Review, attributes: []}]})
+router.delete('/:reviewimageId', requireAuth, async(req, res) => {
+    const reviewId = parseInt(req.params.reviewimageId)
+    const img = await Image.findByPk(reviewId, {include: [{model: Review}]})
     if (!img) return res.status(404).json({ message: "Review Image couldn't be found"})
     if (req.user.id !== img.Review.userId) return res.status(403).json({message: 'Forbidden'});
-    await Image.destroy({where: {id: req.params.reviewImageId}});
+    await Image.destroy({where: {id: reviewId}});
     res.json({ message: "Successfully deleted"})
 
     // // const img = await Image.findByPk(req.params.reviewImageId);

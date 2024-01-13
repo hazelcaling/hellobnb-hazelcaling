@@ -136,6 +136,7 @@ router.get('/', validateQueryParams, validatePagination, async (req, res) => {
         for (let i = 0; i < spots.length; i++) {
             const spot = spots[i].toJSON()
             spotList.push(spot)
+            spot.avgRating = parseInt(spot.avgRating)
             if (spot.previewImage.length === 0) {
                 spot.previewImage = 'No image';
             } else {
