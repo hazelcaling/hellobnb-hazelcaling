@@ -1,6 +1,6 @@
 'use strict';
 
-const { Model, Validator } = require('sequelize');
+const { Model, Validator, Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Booking extends Model {
@@ -16,15 +16,21 @@ module.exports = (sequelize, DataTypes) => {
     startDate: {
       type: DataTypes.DATE,
       allowNull: false,
+      // validate: {
+      //   same
+      // }
+
     },
     endDate: {
       type: DataTypes.DATE,
       allowNull: false,
       validate: {
-        isAfter: {
-          args: [this.startDate],
-          msg: "endDate cannot be on or before startDate"
+        lteStartDate(value) {
+          if (new Date(this.endDate) <= this.startDate) {
+            throw new Error();
+          }
         }
+
       }
     }
   }, {

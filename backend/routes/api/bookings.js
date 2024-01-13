@@ -50,19 +50,63 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
     if (req.user.id !== booking.userId) return res.status(403).json({message: 'Forbidden'})
     if (new Date(startDate) < currentDate || new Date(endDate) < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
 
-    // Check existing booking
-    const existingBooking = await Booking.findOne({
+    const withinExistingBooking = await Booking.findAll({
         where: {
-            spotId: booking.spotId,
-            id: {[Sequelize.Op.ne]: bookingId},
-            [Sequelize.Op.or]: [
-                {startDate: {[Sequelize.Op.between]: [startDate, endDate]}},
-                {endDate: {[Sequelize.Op.between]: [startDate, endDate]}}
-            ]
+            spotId: spotId,
+            [Op.and]: [{startDate: {[Op.lte]: startDate}},{endDate: {[Op.gte]: endDate}}]
+        }
+    })
+
+    const existingBooking = await Booking.findAll({
+        where: {
+            spotId: spotId,
+            // [Op.or]: [{startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)}]
+            [Op.or]: [
+                {startDate: new Date(startDate)}, {startDate: new Date(endDate)}, {endDate: new Date(startDate)}, {endDate: new Date(endDate)},
+                {
+                    startDate: {
+                        [Op.lte]: new Date(startDate),
+                        [Op.gte]: new Date(endDate)
+                    },
+                    endDate: {
+                        [Op.gte]: endDate,
+                    }
+                },
+                {
+                    startDate: {
+                        [Op.lte]: new Date(startDate),
+                    },
+                    endDate: {
+                        [Op.gte]: new Date(startDate),
+                        [Op.lte]: new Date(endDate),
+                    }
+                },
+                {
+                    startDate: {
+                        [Op.gte]: new Date(startDate),
+                    },
+                    endDate: {
+                        [Op.lte]: new Date(endDate)
+                    }
+                }]
         }
     });
+    // // Check existing booking
+    // const existingBooking = await Booking.findOne({
+    //     where: {
+    //         spotId: booking.spotId,
+    //         id: {[Sequelize.Op.ne]: bookingId},
+    //         [Sequelize.Op.or]: [
+    //             {startDate: {[Sequelize.Op.between]: [startDate, endDate]}},
+    //             {endDate: {[Sequelize.Op.between]: [startDate, endDate]}},
+    //             // newly added below
+    //             // {startDate: {[Sequelize.Op.overlap]: [startDate, endDate]}},
+    //             // {endDate: {[Sequelize.Op.overlap]: [startDate, endDate]}},
+    //         ]
+    //     }
+    // });
 
-    if (existingBooking) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
+    if (existingBooking.length > 0 || withinExistingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
     if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
     if (new Date(endDate) < new Date(startDate)) return res.status(403).json({message: "End date cannot be before start date"})
 
