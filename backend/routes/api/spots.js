@@ -375,7 +375,7 @@ router.post('/:spotId/bookings', validateBooking, requireAuth, async (req, res) 
 
     if (!spot) return res.status(404).json({message: "Spot couldn't be found"});
     if (spot.ownerId === req.user.id) return res.status(404).json({message: 'Forbidden'});
-    if (new Date(startDate) === new Date(endDate)) return res.status(403).json({message: "Start date cannot be the same as the end date"})
+    if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
 
 
     // // within existing
