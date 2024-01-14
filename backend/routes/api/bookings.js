@@ -9,7 +9,7 @@ const { Op } = require('sequelize');
 
 const validateEditBooking = [
     // check('startDate')
-    // .custom(async (value, { req }) => {
+    // .custom(async (value) => {
     //   const startDate = req.body.startDate
     //   if (new Date(startDate) < new Date()) throw new Error()
     // })
@@ -21,6 +21,13 @@ const validateEditBooking = [
         if (new Date(endDate) < new Date(startDate)) throw new Error()
       })
       .withMessage('endDate cannot come before startDate'),
+    //   check('endDate')
+    //   .custom(async (value, { req }) => {
+    //     const startDate = req.body.startDate
+    //     const endDate = req.body.endDate
+    //     if (new Date(startDate) === new Date(endDate)) throw new Error()
+    //   })
+    //   .withMessage('Start date cannot be same as End date'),
     handleValidationErrors
   ];
 
@@ -67,12 +74,19 @@ router.put('/:bookingId', validateEditBooking, requireAuth, async (req, res) => 
     const { bookingId } = req.params
     const { startDate, endDate } = req.body
     const booking = await Booking.findByPk(bookingId)
-    const currentDate = new Date()
+    const startDatePastCurrentDate = await Booking.findByPk(bookingId, {
+        where: {
+            startDate: {
+                lte: new Date()
+            },
+        }
+    })
 
+    // if (new Date(booking.startDate) < new Date() && new Date(booking.endDate) < new Date()) return res.status(403).json({"message": "Past bookings can't be modified"})
     if (!booking) return res.status(404).json({message: "Booking couldn't be found"});
+    if (startDate === endDate) return res.status(403).json({message: "Start date cannot be the same as the end date"})
+    if (startDatePastCurrentDate) return res.status(403).json({message: "Past bookings can't be modified"})
     if (req.user.id !== booking.userId) return res.status(403).json({message: 'Forbidden'})
-    if (new Date(booking.startDate) < currentDate || new Date(booking.endDate) < currentDate) return res.status(403).json({"message": "Past bookings can't be modified"})
-
 
     const existingBooking = await Booking.findAll({
         where: {
@@ -118,9 +132,8 @@ router.put('/:bookingId', validateEditBooking, requireAuth, async (req, res) => 
         }
     });
     // res.json(existingBooking.length)
-    if (new Date(startDate) === new Date(endDate)) return res.status(403).json({message: "Start date cannot be the same as the end date"})
+
     if (existingBooking.length > 0) return res.status(403).json({message: "Sorry, this spot is already booked for the specified dates"})
-    // if (new Date(booking.endDate) < currentDate) return res.status(403).json({message: "Past bookings can't be modified"})
 
     await booking.update({
         startDate,
