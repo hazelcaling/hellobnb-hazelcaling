@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       Booking.belongsTo(models.User, { foreignKey: 'userId'});
       Booking.belongsTo(models.Spot, { foreignKey: 'spotId'});
 
+
     }
+
   }
   Booking.init({
     userId: DataTypes.INTEGER,
@@ -17,20 +19,27 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
       // validate: {
-      //   same
+      //   isbeforeCurrentDate() {
+      //     if (new Date(this.startDate) < new Date()) {
+      //       throw new Error('Start date cannot be in the past')
+      //     }
+      //   }
       // }
-
     },
     endDate: {
       type: DataTypes.DATE,
       allowNull: false,
       // validate: {
-      //   lteStartDate(value) {
-      //     if (new Date(this.endDate) <= this.startDate) {
-      //       throw new Error();
+      //   isbeforeStartDate() {
+      //     if (this.endDate <= this.startDate) {
+      //       throw new Error('endDate cannot be on or before startDate')
+      //     }
+      //   },
+      //   isbeforeCurrentDate() {
+      //     if (this.endDate <= new Date()) {
+      //       throw new Error('End date cannot be in the past')
       //     }
       //   }
-
       // }
     }
   }, {
