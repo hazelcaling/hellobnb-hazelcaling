@@ -420,6 +420,14 @@ router.post('/:spotId/bookings', validateBooking, requireAuth, async (req, res) 
                         [Op.lte]: new Date(endDate),
                     }
                 },
+                {
+                    startDate: {
+                        [Op.eq]: new Date(startDate),
+                    },
+                    endDate: {
+                        [Op.eq]: new Date(endDate),
+                    }
+                },
                 // Avoid end date during existing booking
                 {
                     startDate: {
