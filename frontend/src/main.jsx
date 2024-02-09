@@ -14,7 +14,7 @@ if (import.meta.env.MODE !== 'production') {
 
   window.csrfFetch = csrfFetch;
   window.store = store;
-  window.sessionActions = sessionActions; // <-- ADD THIS LINE
+  window.sessionActions = sessionActions
 }
 
 // test the redux store
