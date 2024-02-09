@@ -1,12 +1,5 @@
 import { csrfFetch } from './csrf';
 
-// thunk action test in the browser's devtools console
-// store.dispatch(
-//   sessionActions.login({
-//     credential: "Demo-lition",
-//     password: "password"
-//   })
-// )
 // action types
 const SET_USER = "session/setUser";
 const REMOVE_USER = "session/removeUser";
@@ -39,6 +32,49 @@ export const login = (user) => async (dispatch) => {
   dispatch(setUser(data.user));
   return response;
 };
+// thunk action test in the browser's devtools console
+// store.dispatch(
+//   sessionActions.login({
+//     credential: "Demo-lition",
+//     password: "password"
+//   })
+// )
+
+export const restoreUser = () => async (dispatch) => {
+  const response = await csrfFetch("/api/session");
+  const data = await response.json();
+  dispatch(setUser(data.user));
+  return response;
+};
+// test in devtools
+// store.dispatch(sessionActions.restoreUser());
+
+export const signup = (user) => async (dispatch) => {
+  const { username, firstName, lastName, email, password } = user;
+  const response = await csrfFetch("/api/users", {
+    method: "POST",
+    body: JSON.stringify({
+      username,
+      firstName,
+      lastName,
+      email,
+      password
+    })
+  });
+  const data = await response.json();
+  dispatch(setUser(data.user));
+  return response;
+};
+// test in devtools console
+// store.dispatch(
+//   sessionActions.signup({
+//     username: "NewUser",
+//     firstName: "New",
+//     lastName: "User",
+//     email: "new@user.io",
+//     password: "password",
+//   })
+// )
 
 // session reducer
 const initialState = { user: null };
