@@ -19,8 +19,8 @@ module.exports = {
         country: 'United States',
         lat: 1,
         lng: 1,
-        name: 'Name1',
-        description: 'Description1',
+        name: 'Spot Name 1',
+        description: 'Description 1',
         price: 100
       },
       {
@@ -31,8 +31,8 @@ module.exports = {
         country: 'United States',
         lat: 1,
         lng: 1,
-        name: 'Name2',
-        description: 'Description2',
+        name: 'Spot Name 2',
+        description: 'Description 2',
         price: 100
       }
     ], { validate: true})
