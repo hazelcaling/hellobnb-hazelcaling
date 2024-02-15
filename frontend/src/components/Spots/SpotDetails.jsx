@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getSpotById } from '../../store/spots'
-import { FaStar } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { loadAllReviews } from "../../store/reviews";
-import Reviews from "../Reviews/Reviews";
+import ReviewSummary from "../Reviews/ReviewSummary";
+import Reviews from '../Reviews/Reviews'
+
+
 
 export default function SpotDetails () {
     const dispatch = useDispatch();
@@ -15,6 +15,8 @@ export default function SpotDetails () {
     const { name, city, state, country, description, numReviews, avgRating, price} = spot
     const fn = spot?.Owner?.firstName
     const ln = spot?.Owner?.lastName
+    const isLoggedIn = useSelector(state => state.session.user !== null)
+    const isOwner = useSelector(state => state.spots.ownerId === state.session.user?.id)
 
     useEffect(() => {
         dispatch(getSpotById(spotId))
@@ -25,17 +27,14 @@ export default function SpotDetails () {
         alert('Feature coming soon')
     }
 
-    const handleReviewClick = () => {
-        dispatch(loadAllReviews(spotId))
-    }
-
     return (
-        <div>
-            <h2>{name}</h2>
-            <h3>Location: {city}, {state}, {country}</h3>
-            <div className="images-container">
+        <div className="spotDetails-container">
+            <div className="spotDetails-heading">
+                <h2>{name}</h2>
+                <h3>Location: {city}, {state}, {country}</h3>
+            </div>
+            <div className="spotDetails-images-container">
                 <img src={spot.previewImage} alt="Large Image" className="large-image"/>
-
                 {spot.SpotImages && spot.SpotImages.length > 0 && spot.SpotImages.map((image, index) => (
                     <img
                         key={index}
@@ -44,18 +43,22 @@ export default function SpotDetails () {
                         onClick={() => {
                             setSmallImages(index)
                         }}
-                        />
+                    />
                 ))}
             </div>
-            <span>Hosted by: {fn} {ln}</span>
-            <p>Paragraph: {description}</p>
-            <div className="call-out-info-box">
-                <span>{price} night </span>
-                <span><FaStar /> {avgRating}</span>
-                <span>{numReviews} <Link to='reviews' onClick={handleReviewClick}>reviews</Link></span>
+            <div className="spotDetails-body">
+                <span>Hosted by: {fn} {ln}</span>
+                <p>Paragraph: {description}</p>
             </div>
-            <button onClick={handleClick} className="reserve-button">Reserve</button>
-            <Reviews avgRating={avgRating} numReviews={numReviews}/>
+            <div className="call-out-info-box">
+                <div className="spotDetails-price">{price} night </div>
+                <ReviewSummary avgRating={avgRating} numReviews={numReviews} spotId={spotId}/>
+                <button onClick={handleClick} className="reserve-button">Reserve</button>
+                <div>{numReviews === 0 && isLoggedIn && !isOwner} Be the first to post a review!</div>
+                {1 === 0 ? <Reviews avgRating={avgRating} numReviews={numReviews} spotId={spotId}/> : null}
+            </div>
+
+
         </div>
     )
 }
