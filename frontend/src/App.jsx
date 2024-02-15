@@ -5,6 +5,7 @@ import Navigation from './components/Navigation/Navigation';
 import * as sessionActions from './store/session';
 import SpotList from './components/Spots/Spotlist';
 import SpotDetails from './components/Spots/SpotDetails';
+import Reviews from './components/Reviews/Reviews';
 
 function Layout() {
   const dispatch = useDispatch();
@@ -33,9 +34,16 @@ const router = createBrowserRouter([
         element: <SpotList />
       },
       {
-        path: '/spots/:spotId',
-        element: <SpotDetails />
-      }
+        path: 'spots/:spotId',
+        element: <SpotDetails />,
+        children: [
+          {
+            path: 'reviews',
+            element: <Reviews />
+          },
+        ]
+      },
+
     ]
   }
 ]);
