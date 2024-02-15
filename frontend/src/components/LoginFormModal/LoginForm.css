@@ -45,7 +45,7 @@ input[type='password'] {
 } */
 input[type='text'],
 input[type='password'] {
-    width: 100%;
+    width: 80%;
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -62,20 +62,20 @@ input[type='password']:focus {
 ::placeholder {
     font-size: 18px;
 }
-button {
-    width: 100%;
-    padding: 10px;
-    /* background-color: #ed93cb; */
-    background-color: #f1a3c5;
-    color: #fff;
+
+
+
+.login-button {
+    top: 60px;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    font-size: 20px;
-    font-family: Arial, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+
 }
+
 button:hover {
-    background-color: 	#FFB6C1;
+    background-color: lightgrey;
 }

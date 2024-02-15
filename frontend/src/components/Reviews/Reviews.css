@@ -1,0 +1,30 @@
+.review-container {
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 40px;
+}
+
+.review-heading {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.avgRating,
+.numReviews {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.firstName {
+    margin-bottom: 5px;
+}
+
+.date {
+    margin-bottom: 5px;
+    color: #999;
+}
+
+.text {
+    line-height: 1.5;
+}

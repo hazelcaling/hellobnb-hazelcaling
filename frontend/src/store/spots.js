@@ -1,6 +1,6 @@
 // action types
 const LOAD_SPOTS = 'spots/loadAll'
-const LOAD_SPOT_DETAILS = 'spots/loadSpotDetails'
+const LOAD_SPOT_DETAILS = 'spot/loadSpotDetails'
 
 // action creators
 const loadSpots = (spots) => {
@@ -10,9 +10,10 @@ const loadSpots = (spots) => {
     }
 }
 
-const loadSpotDetails = () => {
+const loadSpotDetails = (spot) => {
     return {
         type: LOAD_SPOT_DETAILS,
+        payload: spot
     }
 }
 
@@ -54,8 +55,7 @@ const spotReducer = (state = initialState, action) => {
         }
         case LOAD_SPOT_DETAILS:
             return {
-                ...state,
-                spot: action.payload
+                ...action.payload
             }
         default:
             return state
