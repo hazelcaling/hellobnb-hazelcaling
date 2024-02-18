@@ -1,5 +1,80 @@
-.button-container button {
-    margin-left: 100em;
-    position: relative;
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f6f6f6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
 
+.logo img {
+    height: 40px;
+}
+
+.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu.open {
+    display: block;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: #f6f6f6;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.menu li {
+    display: block; /* Display list items vertically */
+    margin: 10px 0;
+}
+
+.menu li:first-child {
+    margin-bottom: 0;
+}
+
+.menu-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.menu-icon {
+    font-size: 24px;
+}
+
+
+
+
+
+
+
+@media only screen and (max-width: 768px) {
+    .menu-toggle {
+        display: none; /* Hide menu on smaller screens*/
+    }
+
+    .menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .menu li {
+        display: block;
+        margin: 10px 0;
+    }
 }

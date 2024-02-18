@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { getSpotById } from '../../store/spots'
 import ReviewSummary from "../Reviews/ReviewSummary";
 import Reviews from '../Reviews/Reviews'
-
+import './SpotDetails.css'
 
 
 export default function SpotDetails () {

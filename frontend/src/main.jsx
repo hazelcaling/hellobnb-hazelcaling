@@ -21,6 +21,7 @@ if (import.meta.env.MODE !== 'production') {
 // test the redux store
 // store.dispatch({ type: 'hello' })
 
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ModalProvider>

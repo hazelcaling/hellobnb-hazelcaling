@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { loadAllSpots } from "../../store/spots";
 import './Spotlist.css'
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
 
 export default function SpotList () {
@@ -11,8 +11,9 @@ export default function SpotList () {
     const spotArr = Object.values(spots);
 
     const spotList = spotArr.map((spot) => (
-            <Link to={`/spots/${spot.id}`}>
+
             <div key={spot.id} className="spot-container" title={spot.name}>
+                <Link to={`/spots/${spot.id}`}>
                     <div className="spot-image-container">
                         <img src={spot.previewImage} alt={spot.name} />
                     </div>
@@ -21,8 +22,9 @@ export default function SpotList () {
                         <div className="rating"><FaStar /> {spot.avgRating === null && `New`}{spot.avgRating}</div>
                         <div className="price">{`$${spot.price} night`}</div>
                     </div>
+                    </Link>
             </div>
-            </Link>
+
     ))
 
     useEffect(() => {
