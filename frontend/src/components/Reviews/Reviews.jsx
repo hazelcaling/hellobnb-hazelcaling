@@ -4,7 +4,7 @@ import { loadAllReviews } from "../../store/reviews";
 import './Reviews.css'
 import ReviewSummary from './ReviewSummary'
 
-export default function Reviews ({avgRating, numReviews, spotId}) {
+export default function Reviews ({avgRating, numReviews, spotId }) {
     const dispatch = useDispatch();
     const reviews = useSelector(state => state.reviews)
     const reviewArr = Object.values(reviews)

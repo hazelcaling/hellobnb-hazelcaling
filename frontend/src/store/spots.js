@@ -1,6 +1,9 @@
+import { csrfFetch} from "./csrf"
+
 // action types
 const LOAD_SPOTS = 'spots/loadAll'
 const LOAD_SPOT_DETAILS = 'spot/loadSpotDetails'
+const ADD_SPOT = 'spot/addNew'
 
 // action creators
 const loadSpots = (spots) => {
@@ -14,6 +17,13 @@ const loadSpotDetails = (spot) => {
     return {
         type: LOAD_SPOT_DETAILS,
         payload: spot
+    }
+}
+
+const addSpot = (spot) => {
+    return {
+        type: ADD_SPOT,
+        spot
     }
 }
 
@@ -33,6 +43,22 @@ export const getSpotById = (spotId) => async dispatch => {
     if (response.ok) {
         const spot = await response.json();
         dispatch(loadSpotDetails(spot))
+    }
+}
+
+export const createNewSpot = (spotData) => async dispatch => {
+    const response = await csrfFetch('/api/spots', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(spotData)
+    });
+
+    if (response.ok) {
+        const newSpot = await response.json();
+        dispatch(addSpot(newSpot))
+        return newSpot
     }
 }
 
@@ -56,6 +82,11 @@ const spotReducer = (state = initialState, action) => {
         case LOAD_SPOT_DETAILS:
             return {
                 ...action.payload
+            }
+        case ADD_SPOT:
+            return {
+                ...state,
+                ...state.spots, [action.spot.id]: action.spot
             }
         default:
             return state
