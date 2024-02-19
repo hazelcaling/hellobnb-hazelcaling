@@ -25,19 +25,19 @@ function Navigation({ isLoaded }) {
   } else {
     sessionLinks = (
         <div className='button-container'>
-      <li>
-        <OpenModalButton
-          buttonText="Log In"
-          modalComponent={<LoginFormModal />}
-        />
-      </li>
-      <li>
-        <OpenModalButton
-          buttonText="Sign Up"
-          modalComponent={<SignupFormModal />}
-        />
-      </li>
-      </div>
+          <li>
+            <OpenModalButton
+              buttonText="Log In"
+              modalComponent={<LoginFormModal />}
+            />
+          </li>
+          <li>
+            <OpenModalButton
+              buttonText="Sign Up"
+              modalComponent={<SignupFormModal />}
+            />
+          </li>
+        </div>
     );
   }
 

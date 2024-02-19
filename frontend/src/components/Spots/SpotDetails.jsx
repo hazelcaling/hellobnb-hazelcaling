@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { getSpotById } from '../../store/spots'
 import ReviewSummary from "../Reviews/ReviewSummary";
 import Reviews from '../Reviews/Reviews'
+import PostReviewModal from "../Reviews/PostReviewModal";
+import { loadAllReviews } from "../../store/reviews";
 import './SpotDetails.css'
 
 
@@ -18,6 +20,7 @@ export default function SpotDetails () {
     const isLoggedIn = useSelector(state => state.session.user !== null)
     const isOwner = useSelector(state => state.spots.ownerId === state.session.user?.id)
 
+
     useEffect(() => {
         dispatch(getSpotById(spotId))
         smallImages
@@ -26,6 +29,16 @@ export default function SpotDetails () {
     const handleClick = () => {
         alert('Feature coming soon')
     }
+
+    const reviews = useSelector(state => state.reviews)
+    const reviewArr = Object.values(reviews)
+
+    useEffect(() => {
+        dispatch(loadAllReviews(spotId))
+    }, [spotId])
+
+    const hasPostedReview = reviewArr.filter(review => review.userId === spot.ownerId)
+
 
     return (
         <div className="spotDetails-container">
@@ -55,10 +68,9 @@ export default function SpotDetails () {
                 <ReviewSummary avgRating={avgRating} numReviews={numReviews} spotId={spotId}/>
                 <button onClick={handleClick} className="reserve-button">Reserve</button>
                 <div>{numReviews === 0 && isLoggedIn && !isOwner} Be the first to post a review!</div>
-                {1 === 0 ? <Reviews avgRating={avgRating} numReviews={numReviews} spotId={spotId}/> : null}
+                {isLoggedIn && hasPostedReview.length === 0 && !isOwner && <PostReviewModal spotId={spotId}/>}
+                {1 === 0 ? <Reviews avgRating={avgRating} numReviews={numReviews} spotId={spotId} spot={spot}/> : null}
             </div>
-
-
         </div>
     )
 }

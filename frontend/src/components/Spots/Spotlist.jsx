@@ -11,7 +11,6 @@ export default function SpotList () {
     const spotArr = Object.values(spots);
 
     const spotList = spotArr.map((spot) => (
-
             <div key={spot.id} className="spot-container" title={spot.name}>
                 <Link to={`/spots/${spot.id}`}>
                     <div className="spot-image-container">
@@ -19,12 +18,11 @@ export default function SpotList () {
                     </div>
                     <div className="spot-details">
                         <div className="location">{spot.city}, {spot.state} </div>
-                        <div className="rating"><FaStar /> {spot.avgRating === null && `New`}{spot.avgRating}</div>
+                        <div className="rating"><FaStar /> {spot?.avgRating === null && `New`}{spot.avgRating}</div>
                         <div className="price">{`$${spot.price} night`}</div>
                     </div>
                     </Link>
             </div>
-
     ))
 
     useEffect(() => {
