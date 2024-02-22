@@ -3,10 +3,13 @@ import { useDispatch } from 'react-redux';
 import { IoPersonCircle } from "react-icons/io5";
 import * as sessionActions from '../../store/session';
 
+import { useNavigate } from 'react-router-dom';
 function ProfileButton({ user }) {
     const dispatch = useDispatch();
     const [showMenu, setShowMenu] = useState(false);
     const ulRef = useRef();
+    const navigate = useNavigate()
+
 
     const toggleMenu = (e) => {
       e.stopPropagation(); // Keep click from bubbling up to document and triggering closeMenu
@@ -33,6 +36,10 @@ function ProfileButton({ user }) {
       dispatch(sessionActions.logout());
     };
 
+    const manageSpots = () => {
+      navigate('/spots')
+    }
+
     const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
     return (
@@ -41,6 +48,7 @@ function ProfileButton({ user }) {
           <IoPersonCircle />
         </button>
         <ul className={ulClassName} ref={ulRef}>
+          <button onClick={manageSpots}>Manage Spots</button>
           <li>{user.username}</li>
           <li>{user.firstName} {user.lastName}</li>
           <li>{user.email}</li>

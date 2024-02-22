@@ -3,10 +3,13 @@ import { useDispatch } from 'react-redux';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import * as sessionActions from './store/session';
-import SpotList from './components/Spots/Spotlist';
+import Home from './components/Spots/Home';
 import SpotDetails from './components/Spots/SpotDetails';
 import Reviews from './components/Reviews/Reviews';
 import NewSpotForm from './components/Spots/NewSpotForm';
+import ManageSpots from './components/Spots/ManageSpots'
+
+
 function Layout() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -31,14 +34,25 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <SpotList />,
+        element: <Home />,
       },
       {
         path: 'new-spot',
         element: <NewSpotForm />,
       },
       {
+        path: ':spotId',
+        element: <SpotDetails />,
+        children: [
+          {
+            path: 'reviews',
+            element: <Reviews />
+          }
+        ]
+      },
+      {
         path: 'spots',
+        element: <ManageSpots />,
         children: [
           {
             path: ':spotId',
@@ -49,9 +63,26 @@ const router = createBrowserRouter([
                 element: <Reviews />
               }
             ]
-          }
+          },
         ]
       }
+      // {
+      //   path: 'spots',
+      //   children: [
+      //     {
+      //       path: ':spotId',
+      //       element: <SpotDetails />,
+      //       children: [
+      //         {
+      //           path: 'reviews',
+      //           element: <Reviews />
+      //         }
+      //       ]
+      //     },
+
+      //   ]
+      // },
+
     ]
   }
 ]);

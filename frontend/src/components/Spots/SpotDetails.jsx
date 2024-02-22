@@ -14,17 +14,16 @@ export default function SpotDetails () {
     const { spotId } = useParams();
     const spot = useSelector(state => state.spots)
     const [smallImages, setSmallImages] = useState(null)
-    const { name, city, state, country, description, numReviews, avgRating, price} = spot
     const fn = spot?.Owner?.firstName
     const ln = spot?.Owner?.lastName
     const isLoggedIn = useSelector(state => state.session.user !== null)
-    const isOwner = useSelector(state => state.spots.ownerId === state.session.user?.id)
+    const isOwner = useSelector(state => state.spots?.ownerId === state.session.user?.id)
 
 
     useEffect(() => {
         dispatch(getSpotById(spotId))
         smallImages
-    }, [spotId], [spot.SpotImages])
+    }, [dispatch, spotId, smallImages])
 
     const handleClick = () => {
         alert('Feature coming soon')
@@ -43,8 +42,8 @@ export default function SpotDetails () {
     return (
         <div className="spotDetails-container">
             <div className="spotDetails-heading">
-                <h2>{name}</h2>
-                <h3>Location: {city}, {state}, {country}</h3>
+                <h2>{spot?.name}</h2>
+                <h3>Location: {spot?.city}, {spot?.state}, {spot?.country}</h3>
             </div>
             <div className="spotDetails-images-container">
                 <img src={spot.previewImage} alt="Large Image" className="large-image"/>
@@ -61,15 +60,15 @@ export default function SpotDetails () {
             </div>
             <div className="spotDetails-body">
                 <span>Hosted by: {fn} {ln}</span>
-                <p>Paragraph: {description}</p>
+                <p>Paragraph: {spot?.description}</p>
             </div>
             <div className="call-out-info-box">
-                <div className="spotDetails-price">{price} night </div>
-                <ReviewSummary avgRating={avgRating} numReviews={numReviews} spotId={spotId}/>
+                <div className="spotDetails-price">${spot?.price} night </div>
+                <ReviewSummary avgRating={spot?.avgRating} numReviews={spot?.numReviews} spotId={spotId}/>
                 <button onClick={handleClick} className="reserve-button">Reserve</button>
-                <div>{numReviews === 0 && isLoggedIn && !isOwner} Be the first to post a review!</div>
+                <div>{spot?.numReviews === 0 && isLoggedIn && !isOwner && 'Be the first to post a review!'} </div>
                 {isLoggedIn && hasPostedReview.length === 0 && !isOwner && <PostReviewModal spotId={spotId}/>}
-                {1 === 0 ? <Reviews avgRating={avgRating} numReviews={numReviews} spotId={spotId} spot={spot}/> : null}
+                {<Reviews avgRating={spot.avgRating} numReviews={spot.numReviews} spotId={spotId} spot={spot}/>}
             </div>
         </div>
     )

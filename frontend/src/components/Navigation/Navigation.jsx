@@ -9,9 +9,12 @@ import './Navigation.css'
 import { useState } from 'react';
 
 
+
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector((state) => state.session.user);
   const [menuOpen, setMenuOpen] = useState(false);
+
+
 
   let sessionLinks;
 
