@@ -18,19 +18,17 @@ export default function SpotDetails () {
     const ln = spot?.Owner?.lastName
     const isLoggedIn = useSelector(state => state.session.user !== null)
     const isOwner = useSelector(state => state.spots?.ownerId === state.session.user?.id)
-
+    const reviews = useSelector(state => state.reviews)
+    const reviewArr = Object.values(reviews)
 
     useEffect(() => {
         dispatch(getSpotById(spotId))
         smallImages
-    }, [dispatch, spotId, smallImages])
+    }, [dispatch, smallImages])
 
     const handleClick = () => {
         alert('Feature coming soon')
     }
-
-    const reviews = useSelector(state => state.reviews)
-    const reviewArr = Object.values(reviews)
 
     useEffect(() => {
         dispatch(loadAllReviews(spotId))

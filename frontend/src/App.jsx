@@ -41,6 +41,10 @@ const router = createBrowserRouter([
         element: <NewSpotForm />,
       },
       {
+        path: 'spots',
+        element: <ManageSpots />,
+      },
+      {
         path: ':spotId',
         element: <SpotDetails />,
         children: [
@@ -51,21 +55,16 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: 'spots',
-        element: <ManageSpots />,
+        path: 'spots/:spotId',
+        element: <SpotDetails />,
         children: [
           {
-            path: ':spotId',
-            element: <SpotDetails />,
-            children: [
-              {
-                path: 'reviews',
-                element: <Reviews />
-              }
-            ]
-          },
+            path: 'reviews',
+            element: <Reviews />
+          }
         ]
-      }
+      },
+
       // {
       //   path: 'spots',
       //   children: [

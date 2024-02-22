@@ -21,7 +21,7 @@ function Navigation({ isLoaded }) {
   if (sessionUser) {
     sessionLinks = (
       <>
-        <div><Link to='new-spot'>Create New Spot</Link></div>
+        {/* <div className='createNewSpot'><Link to='new-spot'>Create New Spot</Link></div> */}
         <li><ProfileButton user={sessionUser} /></li>
       </>
     );
@@ -51,6 +51,7 @@ function Navigation({ isLoaded }) {
   return (
     <nav className='navbar'>
       <Link to='/'><div className='logo'><FaAirbnb style={{color: "#f25090", fontSize: "4em"}}/></div></Link>
+      {sessionUser && <div className='createNewSpot'><Link to='new-spot'>Create New Spot</Link></div>}
       <div className='menu-toggle' onClick={toggleMenu}>
         <div className='menu-icon'>&#9776;</div>
         <ul className={`menu ${menuOpen ? 'open' : ''}`}>

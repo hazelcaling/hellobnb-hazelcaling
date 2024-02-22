@@ -45,13 +45,16 @@ function ProfileButton({ user }) {
     return (
       <>
         <button onClick={toggleMenu}>
-          <IoPersonCircle />
+          <IoPersonCircle style={{ fontSize: "50px" }}/>
         </button>
         <ul className={ulClassName} ref={ulRef}>
-          <button onClick={manageSpots}>Manage Spots</button>
-          <li>{user.username}</li>
+
+          <li>Hello, {user.username}</li>
           <li>{user.firstName} {user.lastName}</li>
           <li>{user.email}</li>
+          <li>
+            <button onClick={manageSpots}>Manage Spots</button>
+          </li>
           <li>
             <button onClick={logout}>Log Out</button>
           </li>

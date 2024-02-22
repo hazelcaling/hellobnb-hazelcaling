@@ -8,7 +8,7 @@ const ADD_REVIEW = 'reviews/reviewAdded'
 const loadReviews = (reviews) => {
     return {
         type: LOAD_REVIEWS,
-        payload: reviews
+        reviews
     }
 }
 
@@ -18,8 +18,6 @@ const addReview = (review) => {
         review
     }
 }
-
-
 
 // thunk action creators
 export const loadAllReviews = (spotId) => async (dispatch) => {
@@ -53,7 +51,7 @@ const reviewReducer = (state = initialState, action) => {
     switch(action.type) {
         case LOAD_REVIEWS: {
             const newReviews = {}
-            action.payload.Reviews.forEach(review => {
+            action.reviews.Reviews.forEach(review => {
                 newReviews[review.id] = review
             })
             return {
