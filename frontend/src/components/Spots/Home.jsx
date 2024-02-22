@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { loadAllSpots } from "../../store/spots";
 import './Spotlist.css'
 import  LoadSpots  from "./LoadSpots";
-
+// Testing
 
 export default function Home () {
 
