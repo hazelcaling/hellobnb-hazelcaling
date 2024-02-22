@@ -2,6 +2,7 @@ import { csrfFetch} from "./csrf"
 
 // action types
 const LOAD_SPOTS = 'spots/loadAll'
+// const LOAD_SPOTS_CURRENT_USER = 'spots/loadAllCurrentUserSpots'
 const LOAD_SPOT_DETAILS = 'spot/loadSpotDetails'
 const ADD_SPOT = 'spot/addNew'
 
@@ -12,6 +13,14 @@ const loadSpots = (spots) => {
         payload: spots
     }
 }
+
+// const loadSpotsCurrentUser = (spots) => {
+//     return {
+//         type: LOAD_SPOTS_CURRENT_USER,
+//         payload: spots
+//     }
+// }
+
 
 const loadSpotDetails = (spot) => {
     return {
@@ -36,6 +45,7 @@ export const loadAllSpots = () => async dispatch => {
         dispatch(loadSpots(spots))
     }
 }
+
 
 export const getSpotById = (spotId) => async dispatch => {
     const response = await fetch(`/api/spots/${spotId}`);
