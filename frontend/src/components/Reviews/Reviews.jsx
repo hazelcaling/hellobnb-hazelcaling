@@ -26,10 +26,6 @@ export default function Reviews ({avgRating, numReviews, spotId }) {
             <div className="review-text">{review.review}</div>
         </div>
     ))
-    console.log(reviewList)
-
-
-
 
     return (
         <div className="reviews-container">
