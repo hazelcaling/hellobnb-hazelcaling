@@ -55,7 +55,6 @@ const reviewReducer = (state = initialState, action) => {
                 newReviews[review.id] = review
             })
             return {
-                ...state,
                 ...newReviews
             }
         }

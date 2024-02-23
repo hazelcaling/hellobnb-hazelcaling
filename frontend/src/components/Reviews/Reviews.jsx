@@ -17,7 +17,7 @@ export default function Reviews ({avgRating, numReviews, spotId }) {
 
     useEffect(() => {
         dispatch(loadAllReviews(spotId))
-    }, [spotId])
+    }, [dispatch])
 
     const reviewList = sortedReviews.map(review => (
         <div className="review-container" key={review.id}>

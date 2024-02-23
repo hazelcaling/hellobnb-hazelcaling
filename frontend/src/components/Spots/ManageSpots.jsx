@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
-import { loadAllSpots } from "../../store/spots";
-import LoadSpots from "./LoadSpots";
+import { loadSpots } from "../../store/spots";
 import './ManageSpots.css'
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
@@ -13,15 +12,13 @@ export default function ManageSpots ( ) {
     const userSpots= Object.values(spots).filter(spot => spot?.ownerId === userId);
 
     useEffect(() => {
-        dispatch(loadAllSpots())
+        dispatch(loadSpots())
     }, [userId])
 
     return (
         <div className="manage-spots-container">
-            {/* {<LoadSpots allSpots={allSpots.filter(spot => spot.ownerId === userId)}/>} */}
             <h2 className="manage-spots-title">Manage Your Spots</h2>
             <button className="create-new-spot-button-manage-spots">Create a New Spot</button>
-            <div className="user-spots-container">{<LoadSpots allSpots={userSpots.forEach(spot => (spot))}/>}</div>
              <div className="spots-container">
             {userSpots?.map((spot) => (
                 <div key={spot?.id}>
