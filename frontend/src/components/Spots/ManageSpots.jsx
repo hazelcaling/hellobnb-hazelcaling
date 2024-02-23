@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { loadAllSpots } from "../../store/spots";
 import LoadSpots from "./LoadSpots";
@@ -24,8 +24,8 @@ export default function ManageSpots ( ) {
             <div className="user-spots-container">{<LoadSpots allSpots={userSpots.forEach(spot => (spot))}/>}</div>
              <div className="spots-container">
             {userSpots?.map((spot) => (
-                <>
-                <div className="spot-container" key={spot?.id} title={spot?.name}>
+                <div key={spot?.id}>
+                <div className="spot-container"  title={spot?.name}>
                     <Link to={`${spot?.id}`}>
                         <div className="spot-image-container">
                             {spot?.previewImage === 'No image' ? (<p>No Image</p>) : (<img src={spot?.previewImage} alt={spot?.name} />)}
@@ -38,7 +38,7 @@ export default function ManageSpots ( ) {
                     </Link>
                 </div>
                 <div className="manage-spots-update-delete-buttons-container"><button className="manage-spot-update-button">Update</button><button className="manage-spot-delete-button">Delete</button></div>
-                </>
+                </div>
             ))}
         </div>
         </div>

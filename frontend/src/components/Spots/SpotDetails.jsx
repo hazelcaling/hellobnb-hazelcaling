@@ -32,7 +32,7 @@ export default function SpotDetails () {
 
     useEffect(() => {
         dispatch(loadAllReviews(spotId))
-    }, [spotId])
+    }, [dispatch, spotId])
 
     const hasPostedReview = reviewArr.filter(review => review.userId === spot.ownerId)
 

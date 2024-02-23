@@ -21,7 +21,7 @@ export default function NewSpotForm () {
         imageUrls: ['', '', '', '']
     })
     const [validationErrors, setValidationErrors] = useState({})
-    const [submitted, setSubmitted] = useState(false)
+    // const [submitted, setSubmitted] = useState(false)
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -66,7 +66,7 @@ export default function NewSpotForm () {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true)
+        // setSubmitted(true)
 
         const spotData = {...formData}
         const createdSpot = await dispatch(createNewSpot(spotData))

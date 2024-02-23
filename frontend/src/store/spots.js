@@ -5,6 +5,7 @@ const LOAD_SPOTS = 'spots/loadAll'
 // const LOAD_SPOTS_CURRENT_USER = 'spots/loadAllCurrentUserSpots'
 const LOAD_SPOT_DETAILS = 'spot/loadSpotDetails'
 const ADD_SPOT = 'spot/addNew'
+// const EDIT_SPOT = 'spot/edit'
 
 // action creators
 const loadSpots = (spots) => {
@@ -36,7 +37,19 @@ const addSpot = (spot) => {
     }
 }
 
+// const editSpot = (spotId) => {
+//     return {
+//         type: EDIT_SPOT,
+//         payload: spotId
+//     }
+
+// }
+
 // thunk action creators
+
+// export const updateSpot = (spotId) => async (dispatch) => {
+//     const response = await fetc
+// }
 export const loadAllSpots = () => async dispatch => {
     const response = await fetch('/api/spots');
 
