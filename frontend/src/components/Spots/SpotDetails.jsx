@@ -24,7 +24,7 @@ export default function SpotDetails () {
     useEffect(() => {
         dispatch(getSpotById(spotId))
         smallImages
-    }, [dispatch, smallImages])
+    }, [dispatch, spotId, smallImages])
 
     const handleClick = () => {
         alert('Feature coming soon')
@@ -32,7 +32,7 @@ export default function SpotDetails () {
 
     useEffect(() => {
         dispatch(loadAllReviews(spotId))
-    }, [dispatch, spotId])
+    }, [spotId, dispatch])
 
     const hasPostedReview = reviewArr.filter(review => review.userId === spot.ownerId)
 

@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { loadSpots } from "../../store/spots";
-import './ManageSpots.css'
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-export default function ManageSpots ( ) {
+import DeleteSpotModal from "./DeleteSpotModal";
+import './ManageSpots.css'
+
+export default function ManageSpots () {
 
     const dispatch = useDispatch();
     const spots = useSelector(state => state.spots)
@@ -13,7 +15,8 @@ export default function ManageSpots ( ) {
 
     useEffect(() => {
         dispatch(loadSpots())
-    }, [userId])
+    }, [dispatch])
+
 
     return (
         <div className="manage-spots-container">
@@ -34,7 +37,7 @@ export default function ManageSpots ( ) {
                         </div>
                     </Link>
                 </div>
-                <div className="manage-spots-update-delete-buttons-container"><button className="manage-spot-update-button">Update</button><button className="manage-spot-delete-button">Delete</button></div>
+                <div className="manage-spots-update-delete-buttons-container"><button className="manage-spot-update-button">Update</button><DeleteSpotModal spotId={spot?.id} /></div>
                 </div>
             ))}
         </div>
