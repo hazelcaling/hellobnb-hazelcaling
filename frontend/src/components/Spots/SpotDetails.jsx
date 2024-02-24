@@ -17,9 +17,13 @@ export default function SpotDetails () {
     const fn = spot?.Owner?.firstName
     const ln = spot?.Owner?.lastName
     const isLoggedIn = useSelector(state => state.session.user !== null)
+    const userId = useSelector(state => state.session?.id)
     const isOwner = useSelector(state => state.spots?.ownerId === state.session.user?.id)
+    const isReviewOwner = useSelector(state => state.reviews.userId === userId)
     const reviews = useSelector(state => state.reviews)
     const reviewArr = Object.values(reviews)
+    console.log('line 25', spot)
+    console.log(spot.numReviews)
 
     useEffect(() => {
         dispatch(getSpotById(spotId))
@@ -66,7 +70,7 @@ export default function SpotDetails () {
                 <button onClick={handleClick} className="reserve-button">Reserve</button>
                 <div>{spot?.numReviews === 0 && isLoggedIn && !isOwner && 'Be the first to post a review!'} </div>
                 {isLoggedIn && hasPostedReview.length === 0 && !isOwner && <PostReviewModal spotId={spotId}/>}
-                {<Reviews avgRating={spot.avgRating} numReviews={spot.numReviews} spotId={spotId} spot={spot}/>}
+                {<Reviews avgRating={spot.avgRating} numReviews={spot.numReviews} spotId={spotId} spot={spot} isLoggedIn={isLoggedIn} isReviewOwner={isReviewOwner} />}
             </div>
         </div>
     )
