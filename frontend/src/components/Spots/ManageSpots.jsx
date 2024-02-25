@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
-import { loadAllSpots } from "../../store/spots";
-import LoadSpots from "./LoadSpots";
-import './ManageSpots.css'
+import { loadSpots } from "../../store/spots";
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-export default function ManageSpots ( ) {
+import DeleteSpotModal from "./DeleteSpotModal";
+import './ManageSpots.css'
+import UpdateSpotButton from "./UpdateSpotButton";
+
+export default function ManageSpots () {
 
     const dispatch = useDispatch();
     const spots = useSelector(state => state.spots)
@@ -13,15 +15,15 @@ export default function ManageSpots ( ) {
     const userSpots= Object.values(spots).filter(spot => spot?.ownerId === userId);
 
     useEffect(() => {
-        dispatch(loadAllSpots())
-    }, [userId])
+        dispatch(loadSpots())
+    }, [dispatch])
+
+
 
     return (
         <div className="manage-spots-container">
-            {/* {<LoadSpots allSpots={allSpots.filter(spot => spot.ownerId === userId)}/>} */}
             <h2 className="manage-spots-title">Manage Your Spots</h2>
             <button className="create-new-spot-button-manage-spots">Create a New Spot</button>
-            <div className="user-spots-container">{<LoadSpots allSpots={userSpots.forEach(spot => (spot))}/>}</div>
              <div className="spots-container">
             {userSpots?.map((spot) => (
                 <div key={spot?.id}>
@@ -37,7 +39,7 @@ export default function ManageSpots ( ) {
                         </div>
                     </Link>
                 </div>
-                <div className="manage-spots-update-delete-buttons-container"><button className="manage-spot-update-button">Update</button><button className="manage-spot-delete-button">Delete</button></div>
+                <div className="manage-spots-update-delete-buttons-container"><UpdateSpotButton spotId={spot?.id}/><DeleteSpotModal spotId={spot?.id} /></div>
                 </div>
             ))}
         </div>

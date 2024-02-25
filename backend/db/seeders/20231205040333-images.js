@@ -14,7 +14,7 @@ module.exports = {
       {
         imageableId: spot.id,
         imageableType: 'Spot',
-        url: '../images/doraemonHouse.png',
+        url: 'https://cdn.dribbble.com/users/3696949/screenshots/16744887/nobita_s_house_4x.png',
         preview: false
       }
     ])

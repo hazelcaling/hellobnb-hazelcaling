@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux"
 import { loadAllReviews } from "../../store/reviews";
 import './Reviews.css'
 import ReviewSummary from './ReviewSummary'
+import DeleteReviewModal from "./DeleteReviewModal";
 
-export default function Reviews ({avgRating, numReviews, spotId }) {
+
+export default function Reviews ({avgRating, numReviews, spotId, isLoggedIn, isReviewOwner }) {
     const dispatch = useDispatch();
     const reviews = useSelector(state => state.reviews)
     const reviewArr = Object.values(reviews)
@@ -17,13 +19,15 @@ export default function Reviews ({avgRating, numReviews, spotId }) {
 
     useEffect(() => {
         dispatch(loadAllReviews(spotId))
-    }, [spotId])
+    }, [dispatch, spotId ])
 
     const reviewList = sortedReviews.map(review => (
         <div className="review-container" key={review.id}>
-            <div className="firstName">{review.User.firstName}</div>
+            <div className="firstName">{review.firstName}</div>
             <div className="date">{formatDate(review.createdAt)}</div>
             <div className="review-text">{review.review}</div>
+            {isLoggedIn && isReviewOwner && (<div><DeleteReviewModal reviewId={review.id} /></div>)}
+
         </div>
     ))
 

@@ -7,13 +7,12 @@ import { createNewSpot } from "../../store/spots";
 export default function NewSpotForm () {
     const dispatch = useDispatch()
     const navigate = useNavigate();
+    const [submitted, setSubmitted] = useState(false)
     const [formData, setFormData] = useState({
         address: '',
         city: '',
         state: '',
         country: '',
-        lat: '',
-        lng: '',
         name: '',
         description: '',
         price: '',
@@ -21,7 +20,6 @@ export default function NewSpotForm () {
         imageUrls: ['', '', '', '']
     })
     const [validationErrors, setValidationErrors] = useState({})
-    // const [submitted, setSubmitted] = useState(false)
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -30,14 +28,12 @@ export default function NewSpotForm () {
 
 
         useEffect(() => {
-            const { country, address, city, state, lat, lng, description, name, previewImage, price } = formData
+            const { country, address, city, state, description, name, previewImage, price } = formData
             const errors = {}
                 if (!country) errors.country = 'Country is required'
                 if (!address) errors.address = 'Address is required'
                 if (!city) errors.city = 'City is required'
                 if (!state) errors.state = 'State is required'
-                if (!lat) errors.lat = 'Latitude is required'
-                if (!lng) errors.lng = 'Longitude is required'
                 if (description.length < 30) errors.description = 'Description needs a minimum of 30 characters'
                 if (!name) errors.name = 'Name is required'
                 if (!previewImage) errors.previewImage = 'Prevew image is required'
@@ -52,8 +48,6 @@ export default function NewSpotForm () {
             city: '',
             state: '',
             country: '',
-            lat: '',
-            lng: '',
             name: '',
             description: '',
             price: '',
@@ -66,7 +60,7 @@ export default function NewSpotForm () {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // setSubmitted(true)
+        setSubmitted(true)
 
         const spotData = {...formData}
         const createdSpot = await dispatch(createNewSpot(spotData))
@@ -88,8 +82,8 @@ export default function NewSpotForm () {
                             <h3>Where your place located?</h3>
                             <p>Guests will only get your exact address once they booked a reservation.</p>
                             <label>
-                                Country
-                                <span className="errors">{validationErrors.country}</span>
+                                {/* Country */}
+                                {submitted && <div className="errors">{validationErrors.country}</div>}
                                     <input
                                         type="text"
                                         name="country"
@@ -99,8 +93,8 @@ export default function NewSpotForm () {
                                     />
                             </label>
                             <label>
-                                Street Address
-                                <span className="errors">{validationErrors.address}</span>
+                                {/* Street Address */}
+                                {submitted && <div className="errors">{validationErrors.address}</div>}
                                     <input
                                         type="text"
                                         name="address"
@@ -110,8 +104,8 @@ export default function NewSpotForm () {
                                 />
                             </label>
                             <label >
-                                City
-                                <span className="errors">{validationErrors.city}</span>
+                                {/* City */}
+                                {submitted && <div className="errors">{validationErrors.city}</div>}
                                     <input
                                         type="text"
                                         name="city"
@@ -121,36 +115,14 @@ export default function NewSpotForm () {
                                     />
                             </label>
                             <label>
-                                State
-                                <span className="errors">{validationErrors.state}</span>
+                                {/* State */}
+                                {submitted && <div className="errors">{validationErrors.state}</div>}
                                     <input
                                         type="text"
                                         name="state"
                                         value={formData.state}
                                         onChange={handleChange}
                                         placeholder="STATE"
-                                    />
-                            </label>
-                            <label >
-                                Latitude
-                                <span className="errors">{validationErrors.lat}</span>
-                                    <input
-                                        type="text"
-                                        name="lat"
-                                        value={formData.lat}
-                                        onChange={handleChange}
-                                        placeholder="Latitude"
-                                    />
-                            </label>
-                            <label >
-                                Longitude
-                                <span className="errors">{validationErrors.lng}</span>
-                                    <input
-                                        type="text"
-                                        name="lng"
-                                        value={formData.lng}
-                                        onChange={handleChange}
-                                        placeholder="Longitude"
                                     />
                             </label>
                         </div>
@@ -165,7 +137,7 @@ export default function NewSpotForm () {
                                 placeholder="Please write atleast 30 characters"
                                 cols="30" rows="10">
                             </textarea>
-                            <span className="errors">{validationErrors.description}</span>
+                            {submitted && <div className="errors">{validationErrors.description}</div>}
                         </div>
                         <div className="third-section">
                             <h3>Create a title for your spot</h3>
@@ -177,7 +149,7 @@ export default function NewSpotForm () {
                                 onChange={handleChange}
                                 placeholder="Name of your spot"
                             />
-                            <p className="errors">{validationErrors.name}</p>
+                            {submitted && <p className="errors">{validationErrors.name}</p>}
                         </div>
                         <div className="fourth-section">
                             <h3>Set a base price for your spot</h3>
@@ -191,7 +163,7 @@ export default function NewSpotForm () {
                                         onChange={handleChange}
                                         placeholder="Price per night (USD)"
                                     />
-                                    <p className="errors">{validationErrors.price}</p>
+                                    {submitted && <p className="errors">{validationErrors.price}</p>}
                             </label>
                         </div>
                         <div className="fifth-section">
@@ -204,7 +176,7 @@ export default function NewSpotForm () {
                                 placeholder="Preview Image URL"
                                 onChange={handleChange}
                             />
-                            <p className="errors">{validationErrors.previewImage}</p>
+                            {submitted && <p className="errors">{validationErrors.previewImage}</p>}
                             {formData.imageUrls.map((imageUrl, index) => (
                                 <div key={index}>
                                     <input
@@ -221,7 +193,6 @@ export default function NewSpotForm () {
                     <div className="submit-container">
                         <button
                             type="submit"
-                            disabled={Object.keys(validationErrors).length !== 0}
                             >Create Spot</button>
                     </div>
             </form>

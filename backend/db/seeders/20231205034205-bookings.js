@@ -19,7 +19,6 @@ module.exports = {
         endDate: '2023-12-30'
       }
     ])
-
   },
 
   async down (queryInterface, Sequelize) {
