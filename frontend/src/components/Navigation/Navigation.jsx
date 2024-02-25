@@ -14,6 +14,8 @@ function Navigation({ isLoaded }) {
   const sessionUser = useSelector((state) => state.session.user);
   const [menuOpen, setMenuOpen] = useState(false);
 
+
+
   let sessionLinks;
 
   if (sessionUser) {

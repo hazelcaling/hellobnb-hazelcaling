@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
 import DeleteSpotModal from "./DeleteSpotModal";
 import './ManageSpots.css'
+import UpdateSpotButton from "./UpdateSpotButton";
 
 export default function ManageSpots () {
 
@@ -16,6 +17,7 @@ export default function ManageSpots () {
     useEffect(() => {
         dispatch(loadSpots())
     }, [dispatch])
+
 
 
     return (
@@ -37,7 +39,7 @@ export default function ManageSpots () {
                         </div>
                     </Link>
                 </div>
-                <div className="manage-spots-update-delete-buttons-container"><button className="manage-spot-update-button">Update</button><DeleteSpotModal spotId={spot?.id} /></div>
+                <div className="manage-spots-update-delete-buttons-container"><UpdateSpotButton spotId={spot?.id}/><DeleteSpotModal spotId={spot?.id} /></div>
                 </div>
             ))}
         </div>

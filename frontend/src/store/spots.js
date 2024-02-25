@@ -5,6 +5,17 @@ const LOAD = 'spots/LOAD'
 const LOAD_SPOT_DETAILS = 'spot/loadSpotDetails'
 const ADD_SPOT = 'spot/addNew'
 const DELETE = 'spots/DELETE'
+const UPDATE = 'spots/UPDATE'
+
+export const updateSpot = (spotId, updatedSpot) => {
+    return {
+        type: UPDATE,
+        payload: {
+            spotId,
+            updatedSpot
+        }
+    }
+}
 
 const load = (spots) => {
     return {
@@ -34,19 +45,23 @@ export const deleteSpot = (spotId) => {
     }
 }
 
-// const editSpot = (spotId) => {
-//     return {
-//         type: EDIT_SPOT,
-//         payload: spotId
-//     }
 
-// }
+// thunk action creator
+export const updatedSpot = (spotId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/spots/${spotId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(response)
+    })
+    if (response.ok) {
+        const updatedSpot = response.json()
+        dispatch(updateSpot(updatedSpot))
+        return updateSpot
+    }
 
-// thunk action creators
-
-// export const updateSpot = (spotId) => async (dispatch) => {
-//     const response = await fetc
-// }
+}
 export const loadSpots = () => async dispatch => {
     const response = await fetch(`/api/spots`);
 
@@ -55,6 +70,7 @@ export const loadSpots = () => async dispatch => {
         dispatch(load(spots))
         return spots
     }
+
 }
 
 
@@ -120,6 +136,9 @@ const spotReducer = (state = initialState, action) => {
             const newState = {...state}
             delete newState[action.spotId]
             return newState
+        }
+        case UPDATE: {
+            return {...state}
         }
 
         default:
