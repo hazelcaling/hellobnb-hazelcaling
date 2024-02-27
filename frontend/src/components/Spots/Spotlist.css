@@ -1,9 +1,10 @@
 .spots-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     grid-gap: 20px;
-    margin: 120px auto 0;
+    margin: 10px 50px 10px;
     padding-top: 150px;
+
 }
 
 .spot-container {
@@ -15,10 +16,11 @@
     position: relative;
     margin-bottom: 30px;
 
+
 }
 
 .spot-image-container {
-    width: 100%;
+    width: 50%;
     height: 200px;
     background-size: cover;
     background-position: center;
@@ -56,8 +58,10 @@
 
 .reserve-button {
     background-color: rgb(225, 108, 95);
-    width: 160px;
+    width: 350px;
     height: 50px;
+    color: white;
+    font-weight: bolder;
 }
 
 
@@ -74,4 +78,76 @@
         grid-template-columns: repeat(auto-fit, minmax(calc(25% - 20px), 1fr));
         max-width: 1000px;
     }
+}
+
+.spotDetails-body {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.owner-description, .call-out-info-box {
+    width: 50%;
+}
+
+.call-out-info-box {
+    border: 1px solid black;
+    border-radius: 10px;
+    position: relative;
+    height: 120px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+
+
+}
+
+.left, .right, .bottom {
+    position: absolute;
+
+}
+
+.left {
+    top: 0;
+    left: 0;
+    padding: 20px;
+}
+
+.right {
+    top: 0;
+    right: 0;
+    padding: 20px;
+}
+
+.bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+
+}
+
+
+
+.bottom .reserve-button {
+    margin-top: auto;
+
+}
+
+.spotDetails-container {
+
+
+    box-sizing: border-box;
+
+    padding: 0 100px;
+
+}
+
+.spot-details-reviews {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+
 }

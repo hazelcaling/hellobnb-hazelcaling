@@ -1,66 +1,84 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { IoPersonCircle } from "react-icons/io5";
+import { FaUserCircle } from 'react-icons/fa';
 import * as sessionActions from '../../store/session';
+import OpenModalMenuItem from './OpenModalMenuItem';
+import LoginFormModal from '../LoginFormModal/LoginFormModal';
+import SignupFormModal from '../SignupFormModal/SignupFormModal';
+import { Link, useNavigate } from 'react-router-dom';
+import './Navigation.css';
 
-import { useNavigate } from 'react-router-dom';
 function ProfileButton({ user }) {
-    const dispatch = useDispatch();
-    const [showMenu, setShowMenu] = useState(false);
-    const ulRef = useRef();
-    const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const [showMenu, setShowMenu] = useState(false);
+  const ulRef = useRef();
+  const navigate = useNavigate()
 
 
-    const toggleMenu = (e) => {
-      e.stopPropagation(); // Keep click from bubbling up to document and triggering closeMenu
-      // if (!showMenu) setShowMenu(true);
-      setShowMenu(!showMenu);
+  const toggleMenu = (e) => {
+    e.stopPropagation(); // Keep from bubbling up to document and triggering closeMenu
+    setShowMenu(!showMenu);
+  };
+
+  useEffect(() => {
+    if (!showMenu) return;
+
+    const closeMenu = (e) => {
+      if (!ulRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
     };
 
-    useEffect(() => {
-      if (!showMenu) return;
+    document.addEventListener('click', closeMenu);
 
-      const closeMenu = (e) => {
-        if (ulRef.current && !ulRef.current.contains(e.target)) {
-          setShowMenu(false);
-        }
-      };
+    return () => document.removeEventListener("click", closeMenu);
+  }, [showMenu]);
 
-      document.addEventListener('click', closeMenu);
+  const closeMenu = () => setShowMenu(false);
 
-      return () => document.removeEventListener('click', closeMenu);
-    }, [showMenu]);
+  const logout = (e) => {
+    e.preventDefault();
+    dispatch(sessionActions.logout());
+    closeMenu();
+    navigate('/')
+  };
 
-    const logout = (e) => {
-      e.preventDefault();
-      dispatch(sessionActions.logout());
-    };
+  const ulClassName = "dropdown-content" + (showMenu ? "" : " hidden");
 
-    const manageSpots = () => {
-      navigate('/spots')
-    }
+  return (
+    <>
+      <button onClick={toggleMenu} className='user-icon'>
+        <FaUserCircle style={{fontSize: "3em"}}/>
+      </button>
+      <ul className={ulClassName} ref={ulRef}>
+        {user ? (
+          <>
+            <li>Hello, {user.username}</li>
+            {/* <li>{user.firstName} {user.lastName}</li> */}
+            <li>{user.email}</li>
+            <li><Link to='/spots' className='manage-spots'>Manage Spots</Link></li>
+            <li>
+              <button onClick={logout}>Log Out</button>
+            </li>
+          </>
+        ) : (
+          <>
+            <OpenModalMenuItem
+              itemText="Log In"
+              onItemClick={closeMenu}
+              modalComponent={<LoginFormModal />}
+            />
+            <OpenModalMenuItem
+              itemText="Sign Up"
+              onItemClick={closeMenu}
+              modalComponent={<SignupFormModal />}
+            />
+          </>
+        )}
+      </ul>
+    </>
+  );
+}
 
-    const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
-
-    return (
-      <>
-        <button onClick={toggleMenu}>
-          <IoPersonCircle style={{ fontSize: "50px" }}/>
-        </button>
-        <ul className={ulClassName} ref={ulRef}>
-
-          <li>Hello, {user.username}</li>
-          <li>{user.firstName} {user.lastName}</li>
-          <li>{user.email}</li>
-          <li>
-            <button onClick={manageSpots}>Manage Spots</button>
-          </li>
-          <li>
-            <button onClick={logout}>Log Out</button>
-          </li>
-        </ul>
-      </>
-    );
-  }
-
-  export default ProfileButton;
+export default ProfileButton;

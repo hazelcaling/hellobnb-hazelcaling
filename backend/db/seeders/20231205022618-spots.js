@@ -14,26 +14,26 @@ module.exports = {
       {
         ownerId: user.id,
         address: '1 Street',
-        city: 'San Francisco',
+        city: 'New York',
         state: 'CA',
         country: 'United States',
         lat: 1,
         lng: 1,
-        name: 'Spot Name 1',
-        description: 'Description 1',
-        price: 100
+        name: 'Debugging Haven',
+        description: 'Relax in our Byte-sized bungalow inspire creativity enjoy every moment of zen.',
+        price: 110
       },
       {
         ownerId: user.id,
-        address: '2 Street',
+        address: 'Coding Cabana',
         city: 'San Francisco',
         state: 'CA',
         country: 'United States',
         lat: 1,
         lng: 1,
         name: 'Spot Name 2',
-        description: 'Description 2',
-        price: 100
+        description: 'Peaceful Sanctuary stocked with board games and coding themed decor',
+        price: 201
       }
     ], { validate: true})
   },

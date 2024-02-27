@@ -2,3 +2,63 @@
     margin: 100px auto 0;
 
 }
+
+
+.spotDetails-images-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 5px;
+    width: 500px;
+    height: 300px;
+
+
+}
+
+.large-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    margin: 0;
+}
+
+.large-image img {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    background-size: cover;
+}
+
+
+.small-images {
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+    height: 300px;
+    gap: 5px;
+}
+
+.small-images img {
+    width: calc(45% - 10px);
+    margin-right: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.small-images img:last-child {
+    margin-right: 0;
+}
+
+.spotDetails-body {
+    margin-top: 10px;
+    gap: 20px;
+
+}
+
+.owner-description {
+    gap: 5px
+}

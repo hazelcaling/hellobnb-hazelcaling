@@ -1,12 +1,15 @@
+
 import { FaStar } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
 export default function LoadSpots ({spots}) {
-    const spotList = spots.map((spot) => (
-        <div key={spot?.id} className="spot-container">
+    const sortedSpots = spots.sort((a,b) => new Date(b?.createdAt) - new Date(a?.createdAt))
+
+    const sortedSpotList = sortedSpots.map((spot) => (
+        <div key={spot?.id} className="spot-container" >
             <Link to={`${spot?.id}`}>
             <div className="spot-image-container">
-                {spot?.previewImage === 'No image' ? (<p>No Image</p>) : (<img src={spot?.previewImage} style={{maxWidth: '100%', maxHeight: '100%'}} alt={spot?.name} />)}
+                {spot?.previewImage ? (<img src={spot?.previewImage} style={{maxWidth: '100%', maxHeight: '100%'}} alt={spot?.name} />) : 'No Image'}
             </div>
             <div>
                 <div className="location">{spot?.city}, {spot?.state}</div>
@@ -17,5 +20,5 @@ export default function LoadSpots ({spots}) {
         </div>
     ))
 
-    return (<div className="spots-container">{spotList}</div>)
+    return (<div className="spots-container">{sortedSpotList}</div>)
 }

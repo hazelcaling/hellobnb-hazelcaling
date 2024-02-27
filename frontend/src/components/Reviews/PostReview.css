@@ -35,6 +35,8 @@
 
 .star-rating {
     display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .star-rating input[type='radio'] {
@@ -42,15 +44,19 @@
 }
 
 .star-rating label {
-    font-size: 30px;
-    color: #ccc;
     cursor: pointer;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    color: darkgrey;
+    border-bottom: 20px;
+
 }
 
 .star-rating label:hover ~ label,
 .star-rating input[type='radio']:checked ~
 label {
-    color: grey;
+    color: black;
 }
 
 .star-rating span {
@@ -58,5 +64,18 @@ label {
 }
 
 .star-rating span.filled {
-    color: yellow;
+    color: black;
+}
+
+.submit-review-button:disabled  {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+}
+
+
+    .star-title {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
 }

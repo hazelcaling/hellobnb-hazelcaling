@@ -1,80 +1,83 @@
+
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #f6f6f6;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
+    background-color: white;
+    color: #fff;
+    border-bottom: 1px solid #ccc;
+    border-bottom-width: 2px;
 }
 
-.logo img {
-    height: 40px;
+body {
+    font-family:Verdana, Geneva, Tahoma, sans-serif
 }
 
-.menu {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.menu.open {
-    display: block;
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    background-color: #f6f6f6;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.menu li {
-    display: block; /* Display list items vertically */
-    margin: 10px 0;
-}
-
-.menu li:first-child {
-    margin-bottom: 0;
-}
-
-.menu-toggle {
-    cursor: pointer;
+.top-right {
     display: flex;
     align-items: center;
 }
 
-.menu-icon {
-    font-size: 24px;
+.create-new-spot {
+    display: flex;
+    align-items: center;
+    right: 10px;
+    text-decoration: none;
+    color: rgb(46, 65, 46);
+    font-size: 20px;
+    font-weight: bold;
+    align-self: flex-end;
+    margin-top: 20px;
 }
 
+.profile-dropdown {
+    position: relative;
+    /* cursor: pointer; */
+}
 
+.profile-dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
 
+.profile-dropdown:hover .dropdown-content,
+.profile-dropdown:focus-within .dropdown-content {
+    display: block;
+}
 
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
 
+.dropdown-content li {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
 
+.dropdown-content button {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
 
-@media only screen and (max-width: 768px) {
-    .menu-toggle {
-        display: none; /* Hide menu on smaller screens*/
-    }
+.dropdown-content a:hover, li:hover {
+    background-color: lightgrey;
+}
 
-    .menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background-color: #fff;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .menu li {
-        display: block;
-        margin: 10px 0;
-    }
+.logo-text {
+    text-decoration: none;
+    size: 20px;
 }
