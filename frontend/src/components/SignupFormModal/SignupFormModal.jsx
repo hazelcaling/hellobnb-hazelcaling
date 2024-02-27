@@ -15,9 +15,12 @@ function SignupFormModal() {
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
+  const isDisabled = !email || !username || !firstName || !lastName || !password || !confirmPassword || username.length < 4 || password.length < 6
+  console.log(isDisabled)
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === confirmPassword) {
+    // if (password === confirmPassword) {
       setErrors({});
       return dispatch(
         sessionActions.signup({
@@ -35,10 +38,11 @@ function SignupFormModal() {
             setErrors(data.errors);
           }
         });
-    }
-    return setErrors({
-      confirmPassword: "Confirm Password field must be the same as the Password field"
-    });
+    // }
+    // return setErrors({
+    //   confirmPassword: "Confirm Password field must be the same as the Password field"
+    // });
+
   };
 
   return (
@@ -46,6 +50,7 @@ function SignupFormModal() {
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <div className='form-group'>
+        {errors.email && <p style={{color: 'red'}}>{errors.email}</p>}
         <label>
           {/* Email */}
           <input
@@ -57,9 +62,10 @@ function SignupFormModal() {
           />
         </label>
         </div>
-        {errors.email && <p>{errors.email}</p>}
+
         <div className='form-group'>
         <label>
+        {errors.username && <p style={{color:'red'}}>{errors.username}</p>}
           {/* Username */}
           <input
             type="text"
@@ -71,7 +77,6 @@ function SignupFormModal() {
         </label>
         </div>
 
-        {errors.username && <p>{errors.username}</p>}
         <div className='form-group'>
         <label>
           {/* First Name */}
@@ -101,6 +106,7 @@ function SignupFormModal() {
         <div className='form-group'>
         <label>
           {/* Password */}
+          {errors.password && <p style={{color: 'red'}}>{errors.password}</p>}
           <input
             type="password"
             value={password}
@@ -110,10 +116,11 @@ function SignupFormModal() {
           />
         </label>
         </div>
-        {errors.password && <p>{errors.password}</p>}
+
         <div className='form-group'>
         <label>
           {/* Confirm Password */}
+
           <input
             type="password"
             value={confirmPassword}
@@ -122,11 +129,9 @@ function SignupFormModal() {
             placeholder='Confirm Password'
           />
         </label>
+        {errors.confirmPassword && (<p style={{color: 'red'}}>{errors.confirmPassword}</p>)}
         </div>
-        {errors.confirmPassword && (
-          <p>{errors.confirmPassword}</p>
-        )}
-        <button type="submit" className='signup-button'>Sign Up</button>
+        <button type="submit" className='signup-button' disabled={isDisabled}>Sign Up</button>
       </form>
 
     </div>

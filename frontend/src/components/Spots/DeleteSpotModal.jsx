@@ -1,4 +1,4 @@
-import OpenModalButton from '../OpenModalButton/OpenModalButton'
+import OpenModalButton from '../Navigation/OpenModalButton'
 import DeleteSpot from './DeleteSpot'
 export default function DeleteSpotModal ( {spotId } ) {
 

@@ -1,4 +1,4 @@
-import OpenModalButton from "../OpenModalButton/OpenModalButton";
+import OpenModalButton from "../Navigation/OpenModalButton";
 import DeleteReview from "./DeleteReview";
 
 export default function DeleteReviewModal ({ reviewId }) {

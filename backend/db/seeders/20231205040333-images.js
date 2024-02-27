@@ -15,8 +15,33 @@ module.exports = {
         imageableId: spot.id,
         imageableType: 'Spot',
         url: 'https://cdn.dribbble.com/users/3696949/screenshots/16744887/nobita_s_house_4x.png',
-        preview: false
-      }
+        preview: true
+      },
+      {
+        imageableId: spot.id,
+        imageableType: 'Spot',
+        url: 'https://3.bp.blogspot.com/-s9q7Nafe3hA/WJlu-jUz8ZI/AAAAAAAABSQ/Zyz1OEbuw18ROvgE1ZebDx7Eb-4gRsyYQCLcB/s1600/Modern%2BBahay%2BKubo%2BKahit%2BMunti_Nipa%2BHut%2B%25285%2529.jpg',
+        preview: true
+      },
+      {
+        imageableId: spot.id,
+        imageableType: 'Spot',
+        url: 'https://sa.kapamilya.com/absnews/abscbnnews/media/ancx/culture/2021/36/1mikko.jpg',
+        preview: true
+      },
+
+      {
+        imageableId: spot.id,
+        imageableType: 'Spot',
+        url: 'https://sa.kapamilya.com/absnews/abscbnnews/media/ancx/culture/2021/36/3mikko.jpg',
+        preview: true
+      },
+      {
+        imageableId: spot.id,
+        imageableType: 'Spot',
+        url: 'https://i.ytimg.com/vi/EomANw652qQ/maxresdefault.jpg',
+        preview: true
+      },
     ])
   },
 

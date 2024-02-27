@@ -21,6 +21,17 @@ export default function Home () {
             <button onClick={manageSpots}>ManageSpots</button> */}
             <LoadSpots spots={allSpots} userId={userId} />
         </>
-
     )
+
+    // return (
+    //     <>
+    //         {!allSpots.length && <span>No Spots</span>}
+    //         <div className="spots-container">
+    //             {allSpots.map((spot) => (
+    //                 <SpotDetails key={spot.id} spot ={spot}/>
+    //             ))}
+    //         </div>
+    //     </>
+    // )
+
 }

@@ -13,6 +13,8 @@ export default function NewSpotForm () {
         city: '',
         state: '',
         country: '',
+        lat: '',
+        lng: '',
         name: '',
         description: '',
         price: '',
@@ -28,19 +30,27 @@ export default function NewSpotForm () {
 
 
         useEffect(() => {
-            const { country, address, city, state, description, name, previewImage, price } = formData
+            const { country, address, city, state, lat, lng, description, name, previewImage, price, imageUrls } = formData
             const errors = {}
+            const regex = /\.(jpg|jpeg|png)$/i
+
                 if (!country) errors.country = 'Country is required'
                 if (!address) errors.address = 'Address is required'
                 if (!city) errors.city = 'City is required'
                 if (!state) errors.state = 'State is required'
+                if (!lat) errors.lat = 'Latitude is required'
+                if (!lng) errors.lng = 'Longitude is required'
                 if (description.length < 30) errors.description = 'Description needs a minimum of 30 characters'
                 if (!name) errors.name = 'Name is required'
-                if (!previewImage) errors.previewImage = 'Prevew image is required'
+                if (!regex.test(previewImage)) errors.previewImage = 'Image URL must end in .png, .jpg, or .jpeg'
+                if (!previewImage) errors.previewImage = 'Preview image is required'
+
+                imageUrls.forEach((url) => {
+                    if (!regex.test(url)) errors.imageUrls = 'Image URL must end in .png, .jpg, or .jpeg'
+                })
                 if (!price) errors.price = 'Price is required'
                 setValidationErrors(errors)
         }, [formData])
-
 
     const reset = () => {
         setFormData({
@@ -48,6 +58,8 @@ export default function NewSpotForm () {
             city: '',
             state: '',
             country: '',
+            lat: '',
+            lng: '',
             name: '',
             description: '',
             price: '',
@@ -79,7 +91,7 @@ export default function NewSpotForm () {
                     <div className="fields-container">
                         <h2>Create a new Spot</h2>
                         <div className="first-section">
-                            <h3>Where your place located?</h3>
+                            <h3>Where&apos;s your place located?</h3>
                             <p>Guests will only get your exact address once they booked a reservation.</p>
                             <label>
                                 {/* Country */}
@@ -125,10 +137,30 @@ export default function NewSpotForm () {
                                         placeholder="STATE"
                                     />
                             </label>
+                            <label>
+                                {submitted && <div className="errors">{validationErrors.lat}</div>}
+                                    <input
+                                        type="text"
+                                        name="lat"
+                                        value={formData.lat}
+                                        onChange={handleChange}
+                                        placeholder="Latitude"
+                                    />
+                            </label>,
+                            <label>
+                                {submitted && <div className="errors">{validationErrors.lng}</div>}
+                                    <input
+                                        type="text"
+                                        name="lng"
+                                        value={formData.lng}
+                                        onChange={handleChange}
+                                        placeholder="Longitude"
+                                    />
+                            </label>
                         </div>
                         <div className="second-section">
                             <h3>Describe your place to guests</h3>
-                            <p>Mention the best features of your space, any special amnetities like fast wifi or parking, and what you love abut the neighborhood</p>
+                            <p>Mention the best features of your space, any special amnetities like fast wifi or parking, and what you love about the neighborhood</p>
                             <textarea
                                 type="text"
                                 name="description"
@@ -177,15 +209,17 @@ export default function NewSpotForm () {
                                 onChange={handleChange}
                             />
                             {submitted && <p className="errors">{validationErrors.previewImage}</p>}
-                            {formData.imageUrls.map((imageUrl, index) => (
+
+                            {formData.imageUrls?.map((imageUrl, index) => (
                                 <div key={index}>
                                     <input
                                         type="text"
-                                        name={formData.imageUrls[{index}]}
+                                        name={imageUrl}
                                         value={formData.imageUrls[{index}]}
                                         placeholder="Image URL"
                                         onChange={handleChange}
                                     />
+                                    {submitted && <p className="errors">{validationErrors.imageUrls}</p>}
                                 </div>
                             ))}
                         </div>

@@ -35,8 +35,10 @@ export default function PostReview ({spotId}) {
                     value={textReview}
                     onChange={(e) => setTextReview(e.target.value)}
                 />
+
                 <div className='star-rating'>
                     {[...Array(5)].map((_, index) => (
+                        <>
                         <label key={index}>
                             <input
                                 type='radio'
@@ -47,10 +49,13 @@ export default function PostReview ({spotId}) {
                             <span className={index < rating ? 'filled' : ''}>
                                 &#9733;
                                 </span>
+
                         </label>
-                    ))}
-                    <span> Stars</span>
+                            </>
+                    ))} <span><h4> Stars </h4></span>
+
                 </div>
+
                 <button disabled={textReview.length < 10 || rating === 0} type="submit" className='submit-review-button'>Submit Your Review</button>
             </form>
         </div>
