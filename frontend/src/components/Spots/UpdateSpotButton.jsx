@@ -1,16 +1,11 @@
+import { useNavigate } from "react-router"
 
-import { useNavigate } from "react-router";
+export default function UpdateSpotButton({ spotId }) {
+  const navigate = useNavigate()
 
-export default function UpdateSpotButton ({ spotId }) {
+  const updateSpot = () => {
+    navigate(`${spotId}/update`)
+  }
 
-    const navigate = useNavigate()
-
-    const updateSpot = () => {
-        navigate(`${spotId}/update`)
-    }
-
-    return (
-        <button onClick={updateSpot}>Update</button>
-    )
-
+  return <button onClick={updateSpot}>Update</button>
 }

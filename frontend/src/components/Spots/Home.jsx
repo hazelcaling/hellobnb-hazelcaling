@@ -1,37 +1,5 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux"
-import { loadSpots } from "../../store/spots";
-import './Spotlist.css'
-import  LoadSpots  from "./LoadSpots";
+import SpotList from "./SpotList"
 
-export default function Home () {
-
-    const dispatch = useDispatch();
-    const spots = useSelector(state => state.spots)
-    const userId = useSelector(state => state.session?.user?.id)
-    const allSpots = Object.values(spots);
-
-    useEffect(() => {
-        dispatch(loadSpots())
-    },[dispatch])
-
-    return (
-        <>
-            {/* {showUserSpots ? (<><h2>Manage Spots</h2><LoadSpots allSpots={allSpots.filter(spot => spot.ownerId === userId)} userId={userId} /></>): (<LoadSpots allSpots={allSpots} userId={userId} />)}
-            <button onClick={manageSpots}>ManageSpots</button> */}
-            <LoadSpots spots={allSpots} userId={userId} />
-        </>
-    )
-
-    // return (
-    //     <>
-    //         {!allSpots.length && <span>No Spots</span>}
-    //         <div className="spots-container">
-    //             {allSpots.map((spot) => (
-    //                 <SpotDetails key={spot.id} spot ={spot}/>
-    //             ))}
-    //         </div>
-    //     </>
-    // )
-
+export default function Home() {
+  return <SpotList />
 }
