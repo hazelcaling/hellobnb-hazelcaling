@@ -6,13 +6,14 @@ let options = {}
 if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA // define your schema in options object
 }
+const spots = []
 
 module.exports = {
   async up(queryInterface, Sequelize) {
     const user = await User.findOne({ where: { username: "Demo-lition" } })
     const user2 = await User.findOne({ where: { username: "FakeUser1" } })
     const user3 = await User.findOne({ where: { username: "FakeUser2" } })
-    const spots = []
+
     for (let i = 0; i < 10; i++) {
       const spot = {
         ownerId: user.id,
