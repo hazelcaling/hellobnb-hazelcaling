@@ -46,14 +46,15 @@ export const deleteSpot = (spotId) => {
 }
 
 // thunk action creator
-export const updateSpot = (spotId) => async (dispatch) => {
+export const updateSpot = (spotId, updatedSpot) => async (dispatch) => {
   const response = await csrfFetch(`/api/spots/${spotId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(response),
+    body: JSON.stringify(updatedSpot),
   })
+
   if (response.ok) {
     const updatedSpot = response.json()
     dispatch(edit(updatedSpot))
@@ -134,7 +135,7 @@ const spotReducer = (state = initialState, action) => {
       return newState
     }
     case EDIT: {
-      return { ...state }
+      return { ...state, ...action.payload.updatedSpot }
     }
 
     default:

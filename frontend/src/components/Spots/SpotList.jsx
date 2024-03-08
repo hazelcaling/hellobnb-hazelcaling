@@ -21,10 +21,10 @@ export default function SpotList() {
   const sortedSpotList = sortedSpots.map((spot) => (
     <div
       key={spot?.id}
-      className="spot-container"
+      className="spot-container-spotlist"
     >
       <Link to={`${spot?.id}`}>
-        <div className="spot-image-container">
+        <div className="spot-image-container-spotlist">
           {spot?.previewImage !== "No image" ? (
             <img
               src={spot?.previewImage}
@@ -51,5 +51,5 @@ export default function SpotList() {
     </div>
   ))
 
-  return <div className="spots-container">{sortedSpotList}</div>
+  return <div className="spots-container-spotlist">{sortedSpotList}</div>
 }

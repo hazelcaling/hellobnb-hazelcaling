@@ -33,7 +33,7 @@ export default function ManageSpots() {
       >
         Create a New Spot
       </button>
-      <div className="spots-container">
+      <div className="spots-container-manageSpots">
         {userSpots?.map((spot) => (
           <div key={spot?.id}>
             <div

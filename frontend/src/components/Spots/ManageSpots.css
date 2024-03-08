@@ -2,14 +2,14 @@
   border: 5px solid red;
 } */
 
-.spots-container {
+.spots-container-manageSpots {
   /* border: 5px solid orange; */
   margin-left: 150px;
   display: flex;
 
   flex-wrap: wrap;
   justify-content: flex-start;
-  background-color: yellow;
+  /* background-color: yellow; */
 }
 
 .spot-container {

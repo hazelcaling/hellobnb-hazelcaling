@@ -1,35 +1,42 @@
 import { useEffect, useState } from "react"
 import "./NewSpotForm.css"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { createNewSpot } from "../../store/spots"
 import { addImage } from "../../store/image"
+import { updateSpot } from "../../store/spots"
 
-export default function NewSpotForm() {
+export default function NewSpotForm({ spot }) {
   const { spotId } = useParams()
-  const spot = useSelector((state) => state.spots)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  console.log(spot)
+  let initialValue
+  if (spotId) {
+    initialValue = { ...spot }
+  } else {
+    initialValue = {
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      lat: "",
+      lng: "",
+      name: "",
+      description: "",
+      price: "",
+      imageUrl1: "",
+      imageUrl2: "",
+      imageUrl3: "",
+      imageUrl4: "",
+    }
+  }
 
   const [submitted, setSubmitted] = useState(false)
-  const [spotData, setSpotData] = useState({
-    address: "",
-    city: "",
-    state: "",
-    country: "",
-    lat: "",
-    lng: "",
-    name: "",
-    description: "",
-    price: "",
-    imageUrl1: "",
-    imageUrl2: "",
-    imageUrl3: "",
-    imageUrl4: "",
-  })
+  const [spotData, setSpotData] = useState({ ...initialValue })
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    setSpotData({ ...spot })
+  }, [spot])
 
   const [imageData, setImageData] = useState({
     url: "",
@@ -131,10 +138,22 @@ export default function NewSpotForm() {
       reset()
     }
   }
+  const handleUpdate = async (e) => {
+    // console.log("updated")
+    e.preventDefault()
+    setSubmitted(true)
+
+    const editedSpot = await dispatch(updateSpot(spotId, spotData))
+
+    if (editedSpot) {
+      navigate(`/spots/${spotId}`)
+      reset()
+    }
+  }
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={spotId ? handleUpdate : handleSubmit}
       className="spot-form"
     >
       <div className="fields-container">
@@ -153,7 +172,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="country"
-              value={spotData.country || spot.country}
+              value={spotData.country}
               onChange={handleChange}
               placeholder="Country"
             />
@@ -166,7 +185,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="address"
-              value={spotData.address || spot.address}
+              value={spotData.address}
               onChange={handleChange}
               placeholder="Address"
             />
@@ -177,7 +196,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="city"
-              value={spotData.city || spot.city}
+              value={spotData.city}
               onChange={handleChange}
               placeholder="City"
             />
@@ -190,7 +209,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="state"
-              value={spotData.state || spot.state}
+              value={spotData.state}
               onChange={handleChange}
               placeholder="STATE"
             />
@@ -200,7 +219,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="lat"
-              value={spotData.lat || spot.lat}
+              value={spotData.lat}
               onChange={handleChange}
               placeholder="Latitude"
             />
@@ -211,7 +230,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="lng"
-              value={spotData.lng || spot.lng}
+              value={spotData.lng}
               onChange={handleChange}
               placeholder="Longitude"
             />
@@ -226,7 +245,7 @@ export default function NewSpotForm() {
           <textarea
             type="text"
             name="description"
-            value={spotData.description || spot.description}
+            value={spotData.description}
             onChange={handleChange}
             placeholder="Please write atleast 30 characters"
             cols="30"
@@ -245,7 +264,7 @@ export default function NewSpotForm() {
           <input
             type="text"
             name="name"
-            value={spotData.name || spot.name}
+            value={spotData.name}
             onChange={handleChange}
             placeholder="Name of your spot"
           />
@@ -262,7 +281,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="price"
-              value={spotData.price || spot.price}
+              value={spotData.price}
               onChange={handleChange}
               placeholder="Price per night (USD)"
             />

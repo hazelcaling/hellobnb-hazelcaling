@@ -6,7 +6,7 @@ export default function ReviewDetails({ review, isLoggedIn }) {
     const options = { month: "long", year: "numeric" }
     return date.toLocaleDateString("en-US", options)
   }
-  const userId = useSelector((state) => state.session?.user.id)
+  const userId = useSelector((state) => state.session?.user?.id)
   const isReviewOwner = review.userId === userId
 
   return (
