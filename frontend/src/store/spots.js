@@ -3,7 +3,7 @@ import { csrfFetch } from "./csrf"
 // action types
 const LOAD = "spots/LOAD"
 const LOAD_SPOT_DETAILS = "spot/LOAD_DETAILS"
-const ADD_SPOT = "spot/ADD"
+const ADD = "spot/ADD"
 const DELETE = "spots/DELETE"
 const EDIT = "spots/EDIT"
 
@@ -31,9 +31,9 @@ const loadSpotDetails = (spot) => {
   }
 }
 
-const addSpot = (spot) => {
+const add = (spot) => {
   return {
-    type: ADD_SPOT,
+    type: ADD,
     spot,
   }
 }
@@ -92,7 +92,7 @@ export const createNewSpot = (spotData) => async (dispatch) => {
 
   if (response.ok) {
     const newSpot = await response.json()
-    dispatch(addSpot(newSpot))
+    dispatch(add(newSpot))
     return newSpot
   }
 }
@@ -124,7 +124,7 @@ const spotReducer = (state = initialState, action) => {
       return {
         ...action.spot,
       }
-    case ADD_SPOT:
+    case ADD:
       return {
         ...state,
         [action.spot.id]: action.spot,

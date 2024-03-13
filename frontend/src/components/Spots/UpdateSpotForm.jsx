@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { getSpotById } from "../../store/spots"
-import NewSpotForm from "./NewSpotForm"
+import SpotForm from "./SpotForm"
 
 export default function UpdateSpotForm() {
   const dispatch = useDispatch()
@@ -13,5 +13,5 @@ export default function UpdateSpotForm() {
   }, [spotId, dispatch])
   const spot = useSelector((state) => state.spots)
 
-  return <NewSpotForm spot={spot} />
+  return <SpotForm spot={spot} />
 }
