@@ -192,8 +192,8 @@ router.get("/", validateQueryParams, validatePagination, async (req, res) => {
     where,
     group: ["Spot.id"],
     order: ["id"],
-    limit: size,
-    offset: (page - 1) * size,
+    // limit: size,
+    // offset: (page - 1) * size,
     subQuery: false,
   })
 
@@ -275,6 +275,7 @@ router.get("/:spotId", async (req, res) => {
   })
 
   const spotres = spotDetails.toJSON()
+  spotres.avgRating = parseInt(spotres.avgRating)
   spotres.numReviews = parseInt(spotres.numReviews)
 
   res.json(spotres)

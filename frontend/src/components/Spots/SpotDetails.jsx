@@ -82,15 +82,16 @@ export default function SpotDetails() {
           <p>{spot?.description}</p>
         </div>
         <div className="call-out-info-box">
-          <div className="left">${spot?.price} night </div>
-          <div className="right">
-            <ReviewSummary
-              avgRating={spot?.avgRating}
-              numReviews={spot?.numReviews}
-              spotId={spotId}
-            />
+          <div className="top">
+            <div className="left">${spot?.price} night </div>
+            <div className="right">
+              <ReviewSummary
+                avgRating={spot?.avgRating}
+                numReviews={spot?.numReviews}
+                spotId={spotId}
+              />
+            </div>
           </div>
-
           <div className="bottom">
             <button
               onClick={handleClick}

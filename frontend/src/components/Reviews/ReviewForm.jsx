@@ -1,7 +1,7 @@
 import { useState } from "react"
 import "./PostReview.css"
 import { useDispatch } from "react-redux"
-import { createReview, loadAllReviews } from "../../store/reviews"
+import { createReview } from "../../store/reviews"
 import { useModal } from "../../context/Modal"
 import React from "react"
 export default function ReviewForm({ spotId }) {
@@ -19,8 +19,7 @@ export default function ReviewForm({ spotId }) {
       })
     ).then(closeModal)
     if (createdReview) {
-      dispatch(loadAllReviews())
-      return createReview
+      return createdReview
     }
   }
 

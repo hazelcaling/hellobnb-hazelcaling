@@ -1,12 +1,13 @@
 .spotDetails-container {
-  margin: 100px auto 0;
+  margin: 10px auto 0;
+  padding: 100px;
 }
 
 .spotDetails-body {
   margin-top: 10px;
   gap: 20px;
   display: flex;
-  border: 2px solid green;
+
   padding: 20px;
 }
 
@@ -50,7 +51,7 @@
 }
 .smallbox {
   padding: 2px;
-  /* background-color: blue; */
+
   width: 300px;
   flex-basis: 50%;
   height: 50%;
@@ -62,18 +63,8 @@ h2 {
 }
 
 .call-out-info-box {
-  /* display: flex;
-  border: 2px solid blue;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1;
-  background-color: green; */
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   border: 2px solid black;
   border-radius: 10px;
 }
@@ -81,12 +72,36 @@ h2 {
 .reserve-button {
   background-color: salmon;
   width: 300px;
-
   align-self: center;
+  font-size: 16px;
+  height: 40px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.left,
+.right,
+.bottom {
+  padding: 10px;
 }
 
 .bottom {
-  align-self: flex-end;
+  align-self: center;
+}
 
-  height: 50px;
+.reserve-button:hover {
+  background-color: lightsalmon;
+}
+
+.spot-details-reviews {
+  padding: 20px;
+}
+
+.spotDetails-body {
+  border-bottom: 1px solid #ccc;
+  border-bottom-width: 2px;
 }

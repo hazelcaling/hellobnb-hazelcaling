@@ -45,7 +45,7 @@ export default function ManageSpots() {
                   {spot?.previewImage === "No image" ? (
                     <img
                       src="https://via.placeholder.com/300"
-                      style={{ height: "225px" }}
+                      style={{ height: "200px" }}
                     />
                   ) : (
                     <img
