@@ -1,17 +1,14 @@
 import { useState } from "react"
 import "./PostReview.css"
 import { useDispatch } from "react-redux"
-import { createReview } from "../../store/reviews"
+import { createReview, loadAllReviews } from "../../store/reviews"
 import { useModal } from "../../context/Modal"
-
-export default function PostReview({ spotId }) {
+import React from "react"
+export default function ReviewForm({ spotId }) {
   const { closeModal } = useModal()
   const dispatch = useDispatch()
   const [rating, setRating] = useState(0)
   const [textReview, setTextReview] = useState("")
-  const handleRatingChange = (value) => {
-    setRating(value)
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -22,6 +19,7 @@ export default function PostReview({ spotId }) {
       })
     ).then(closeModal)
     if (createdReview) {
+      dispatch(loadAllReviews())
       return createReview
     }
   }
@@ -43,17 +41,17 @@ export default function PostReview({ spotId }) {
 
         <div className="star-rating">
           {[...Array(5)].map((_, index) => (
-            <>
-              <label key={index}>
+            <React.Fragment key={index}>
+              <label>
                 <input
                   type="radio"
                   name="rating"
                   value={index + 1}
-                  onClick={() => handleRatingChange(index + 1)}
+                  onClick={() => setRating(index + 1)}
                 />
                 <span className={index < rating ? "filled" : ""}>&#9733;</span>
               </label>
-            </>
+            </React.Fragment>
           ))}{" "}
           <span>
             <h4> Stars </h4>

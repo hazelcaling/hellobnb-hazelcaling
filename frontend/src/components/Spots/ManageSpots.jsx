@@ -33,7 +33,7 @@ export default function ManageSpots() {
       >
         Create a New Spot
       </button>
-      <div className="spots-container">
+      <div className="spots-container-manageSpots">
         {userSpots?.map((spot) => (
           <div key={spot?.id}>
             <div
@@ -43,7 +43,10 @@ export default function ManageSpots() {
               <Link to={`${spot?.id}`}>
                 <div className="spot-image-container">
                   {spot?.previewImage === "No image" ? (
-                    <p>No Image</p>
+                    <img
+                      src="https://via.placeholder.com/300"
+                      style={{ height: "225px" }}
+                    />
                   ) : (
                     <img
                       src={spot?.previewImage}
@@ -57,15 +60,17 @@ export default function ManageSpots() {
                   </div>
                   <div className="rating">
                     <FaStar />{" "}
-                    {spot?.avgRating === null ? "New" : spot?.avgRating}
+                    {spot?.avgRating === null
+                      ? "New"
+                      : spot?.avgRating?.toFixed(1)}
                   </div>
-                  <div className="price">{`$${spot?.price} night`}</div>
                 </div>
+                <div className="price">{`$${spot?.price} night`}</div>
               </Link>
-            </div>
-            <div className="manage-spots-update-delete-buttons-container">
-              <UpdateSpotButton spotId={spot?.id} />
-              <DeleteSpotModal spotId={spot?.id} />
+              <div className="manage-spots-update-delete-buttons-container">
+                <UpdateSpotButton spotId={spot?.id} />
+                <DeleteSpotModal spotId={spot?.id} />
+              </div>
             </div>
           </div>
         ))}

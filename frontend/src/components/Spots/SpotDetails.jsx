@@ -5,12 +5,14 @@ import { getSpotById } from "../../store/spots"
 import ReviewSummary from "../Reviews/ReviewSummary"
 import Reviews from "../Reviews/Reviews"
 import PostReviewModal from "../Reviews/PostReviewModal"
-import { loadAllReviews } from "../../store/reviews"
 import "./SpotDetails.css"
 
 export default function SpotDetails() {
+  console.log("rendering")
+
   const dispatch = useDispatch()
   const { spotId } = useParams()
+
   const spot = useSelector((state) => state.spots)
 
   const fn = spot?.Owner?.firstName
@@ -22,6 +24,10 @@ export default function SpotDetails() {
 
   const reviews = useSelector((state) => state.reviews)
   const reviewArr = Object.values(reviews)
+  const hasPostedReview = reviewArr.filter(
+    (review) => review.userId === spot.ownerId
+  )
+  const spotImages = useSelector((state) => state?.spots?.SpotImages)
 
   useEffect(() => {
     dispatch(getSpotById(spotId))
@@ -31,14 +37,9 @@ export default function SpotDetails() {
     alert("Feature coming soon")
   }
 
-  useEffect(() => {
-    dispatch(loadAllReviews(spotId))
-  }, [spotId, dispatch])
-
-  const hasPostedReview = reviewArr.filter(
-    (review) => review.userId === spot.ownerId
-  )
-  const spotImages = useSelector((state) => state?.spots?.SpotImages)
+  // useEffect(() => {
+  //   dispatch(loadAllReviews(spotId))
+  // }, [spotId, dispatch])
 
   return (
     <div className="spotDetails-container">
@@ -100,28 +101,27 @@ export default function SpotDetails() {
           </div>
         </div>
       </div>
-      <div>
-        {spot?.numReviews === 0 &&
-          isLoggedIn &&
-          !isOwner &&
-          "Be the first to post a review!"}{" "}
-      </div>
       <div className="spot-details-reviews">
         <ReviewSummary
           avgRating={spot?.avgRating}
           numReviews={spot?.numReviews}
-          spotId={spotId}
         />
         {isLoggedIn && hasPostedReview.length === 0 && !isOwner && (
           <PostReviewModal spotId={spotId} />
         )}
+        <div>
+          {spot?.numReviews === 0 &&
+            isLoggedIn &&
+            !isOwner &&
+            "Be the first to post a review!"}{" "}
+        </div>
         {
           <Reviews
             avgRating={spot.avgRating}
             numReviews={spot.numReviews}
             spotId={spotId}
-            spot={spot}
             isLoggedIn={isLoggedIn}
+            reviews={reviews}
           />
         }
       </div>

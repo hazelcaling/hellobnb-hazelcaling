@@ -9,6 +9,7 @@ export default function SpotList() {
   const dispatch = useDispatch()
   const spots = useSelector((state) => state.spots)
   const spotList = Object.values(spots)
+  console.log(spots)
 
   useEffect(() => {
     dispatch(loadSpots())
@@ -21,10 +22,11 @@ export default function SpotList() {
   const sortedSpotList = sortedSpots.map((spot) => (
     <div
       key={spot?.id}
-      className="spot-container"
+      className="spot-container-spotlist"
+      title={spot?.name}
     >
       <Link to={`${spot?.id}`}>
-        <div className="spot-image-container">
+        <div className="spot-image-container-spotlist">
           {spot?.previewImage !== "No image" ? (
             <img
               src={spot?.previewImage}
@@ -38,18 +40,19 @@ export default function SpotList() {
             />
           )}
         </div>
-        <div>
-          <div className="location">
+        <div className="details-spotlist">
+          <div className="location-spotlist">
             {spot?.city}, {spot?.state}
           </div>
-          <div className="rating">
-            <FaStar /> {spot?.avgRating === null ? "New" : spot?.avgRating}
+          <div className="rating-spotlist">
+            <FaStar />{" "}
+            {spot?.avgRating === null ? "New" : spot?.avgRating?.toFixed(1)}
           </div>
-          <div className="price">{`$${spot?.price} night`}</div>
         </div>
+        <div className="price-spotlist">{`$${spot?.price} night`}</div>
       </Link>
     </div>
   ))
 
-  return <div className="spots-container">{sortedSpotList}</div>
+  return <div className="spots-container-spotlist">{sortedSpotList}</div>
 }

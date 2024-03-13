@@ -5,7 +5,7 @@ import "./Reviews.css"
 import ReviewSummary from "./ReviewSummary"
 import ReviewDetails from "./ReviewDetails"
 
-export default function Reviews({ avgRating, numReviews, spotId, isLoggedIn }) {
+export default function Reviews({ spotId, isLoggedIn }) {
   const dispatch = useDispatch()
   const reviews = useSelector((state) => state.reviews)
   const reviewArr = Object.values(reviews)
@@ -32,15 +32,7 @@ export default function Reviews({ avgRating, numReviews, spotId, isLoggedIn }) {
   return (
     <>
       <div className="reviews-container">
-        <div className="review-heading">
-          {1 === 0 && (
-            <ReviewSummary
-              avgRating={avgRating}
-              numReviews={numReviews}
-              spotId={spotId}
-            />
-          )}
-        </div>
+        <div className="review-heading">{1 === 0 && <ReviewSummary />}</div>
         {reviewList}
       </div>
     </>

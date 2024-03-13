@@ -14,6 +14,7 @@ function SignupFormModal() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [errors, setErrors] = useState({})
   const { closeModal } = useModal()
+  const [submitted, setSubmitted] = useState(false)
 
   const isDisabled =
     !email ||
@@ -24,12 +25,16 @@ function SignupFormModal() {
     !confirmPassword ||
     username.length < 4 ||
     password.length < 6
-  console.log(isDisabled)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // if (password === confirmPassword) {
-    setErrors({})
+    setSubmitted(true)
+    if (password !== confirmPassword) {
+      errors.confirmPassword = "Password do not match"
+      setErrors(errors)
+      return
+    }
+
     return dispatch(
       sessionActions.signup({
         email,
@@ -42,6 +47,7 @@ function SignupFormModal() {
       .then(closeModal)
       .catch(async (res) => {
         const data = await res.json()
+        console.log(data)
         if (data?.errors) {
           setErrors(data.errors)
         }
@@ -129,7 +135,7 @@ function SignupFormModal() {
               placeholder="Confirm Password"
             />
           </label>
-          {errors.confirmPassword && (
+          {submitted && (
             <p style={{ color: "red" }}>{errors.confirmPassword}</p>
           )}
         </div>

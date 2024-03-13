@@ -1,35 +1,42 @@
 import { useEffect, useState } from "react"
 import "./NewSpotForm.css"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { createNewSpot } from "../../store/spots"
 import { addImage } from "../../store/image"
+import { updateSpot } from "../../store/spots"
 
-export default function NewSpotForm() {
+export default function SpotForm({ spot }) {
   const { spotId } = useParams()
-  const spot = useSelector((state) => state.spots)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  console.log(spot)
+  let initialValue
+  if (spotId) {
+    initialValue = { ...spot }
+  } else {
+    initialValue = {
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      lat: "",
+      lng: "",
+      name: "",
+      description: "",
+      price: "",
+      imageUrl1: "",
+      imageUrl2: "",
+      imageUrl3: "",
+      imageUrl4: "",
+    }
+  }
 
   const [submitted, setSubmitted] = useState(false)
-  const [spotData, setSpotData] = useState({
-    address: "",
-    city: "",
-    state: "",
-    country: "",
-    lat: "",
-    lng: "",
-    name: "",
-    description: "",
-    price: "",
-    imageUrl1: "",
-    imageUrl2: "",
-    imageUrl3: "",
-    imageUrl4: "",
-  })
+  const [spotData, setSpotData] = useState({ ...initialValue })
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    setSpotData({ ...spot })
+  }, [spot])
 
   const [imageData, setImageData] = useState({
     url: "",
@@ -74,16 +81,16 @@ export default function NewSpotForm() {
       errors.description = "Description needs a minimum of 30 characters"
     if (!name) errors.name = "Name is required"
     if (!regex.test(url))
-      errors.url = "Image URL must end in .png, .jpg, or .jpeg"
+      errors.previewImage = "Image URL must end in .png, .jpg, or .jpeg"
     if (!url) errors.url = "Preview image is required"
     if (!price) errors.price = "Price is required"
-    if (imageUrl1 !== "" && !regex.test(imageUrl1))
+    if (imageUrl1 && !regex.test(imageUrl1))
       errors.imageUrl1 = "Image URL must end in .png, .jpg, or .jpeg"
-    if (imageUrl1 !== "" && !regex.test(imageUrl2))
+    if (imageUrl2 && !regex.test(imageUrl2))
       errors.imageUrl2 = "Image URL must end in .png, .jpg, or .jpeg"
-    if (imageUrl1 !== "" && !regex.test(imageUrl3))
+    if (imageUrl3 && !regex.test(imageUrl3))
       errors.imageUrl3 = "Image URL must end in .png, .jpg, or .jpeg"
-    if (imageUrl1 !== "" && !regex.test(imageUrl4))
+    if (imageUrl4 && !regex.test(imageUrl4))
       errors.imageUrl4 = "Image URL must end in .png, .jpg, or .jpeg"
     setValidationErrors(errors)
   }, [spotData, imageData])
@@ -112,29 +119,53 @@ export default function NewSpotForm() {
     setSubmitted(true)
 
     const spot = { ...spotData }
-    const image = { url: imageData.url, preview: true }
-    const image1 = { url: spotData.imageUrl1, preview: true }
-    const image2 = { url: spotData.imageUrl2, preview: true }
-    const image3 = { url: spotData.imageUrl3, preview: true }
-    const image4 = { url: spotData.imageUrl4, preview: true }
     const createdSpot = await dispatch(createNewSpot(spot))
-    const newSpotId = createdSpot.id
+    const image = { url: imageData.url, preview: true }
+    await dispatch(addImage(createdSpot.id, image))
+    let image1
+    let image2
+    let image3
+    let image4
 
-    await dispatch(addImage(newSpotId, image))
-    if (spotData.imageUrl1 !== "") await dispatch(addImage(newSpotId, image1))
-    if (spotData.imageUrl2 !== "") await dispatch(addImage(newSpotId, image2))
-    if (spotData.imageUrl3 !== "") await dispatch(addImage(newSpotId, image3))
-    if (spotData.imageUrl4 !== "") await dispatch(addImage(newSpotId, image4))
+    !spotData.imageUrl1
+      ? (image1 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image1 = { url: spotData.imageUrl1, preview: true })
+    await dispatch(addImage(createdSpot.id, image1))
+    !spotData.imageUrl2
+      ? (image2 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image2 = { url: spotData.imageUrl2, preview: true })
+    await dispatch(addImage(createdSpot.id, image2))
+    !spotData.imageUrl3
+      ? (image3 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image3 = { url: spotData.imageUrl3, preview: true })
+    await dispatch(addImage(createdSpot.id, image3))
+    !spotData.imageUrl4
+      ? (image4 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image4 = { url: spotData.imageUrl4, preview: true })
+    await dispatch(addImage(createdSpot.id, image4))
 
     if (createdSpot) {
       navigate(`/spots/${createdSpot.id}`)
+      reset()
+    }
+    return createdSpot
+  }
+
+  const handleUpdate = async (e, spotData) => {
+    // console.log("updated")
+    e.preventDefault()
+
+    const editedSpot = await dispatch(updateSpot(spotId, spotData))
+
+    if (editedSpot) {
+      navigate(`/spots/${spotId}`)
       reset()
     }
   }
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={spotId ? handleUpdate : handleSubmit}
       className="spot-form"
     >
       <div className="fields-container">
@@ -153,7 +184,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="country"
-              value={spotData.country || spot.country}
+              value={spotData.country}
               onChange={handleChange}
               placeholder="Country"
             />
@@ -166,7 +197,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="address"
-              value={spotData.address || spot.address}
+              value={spotData.address}
               onChange={handleChange}
               placeholder="Address"
             />
@@ -177,7 +208,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="city"
-              value={spotData.city || spot.city}
+              value={spotData.city}
               onChange={handleChange}
               placeholder="City"
             />
@@ -190,7 +221,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="state"
-              value={spotData.state || spot.state}
+              value={spotData.state}
               onChange={handleChange}
               placeholder="STATE"
             />
@@ -200,7 +231,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="lat"
-              value={spotData.lat || spot.lat}
+              value={spotData.lat}
               onChange={handleChange}
               placeholder="Latitude"
             />
@@ -211,7 +242,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="lng"
-              value={spotData.lng || spot.lng}
+              value={spotData.lng}
               onChange={handleChange}
               placeholder="Longitude"
             />
@@ -226,7 +257,7 @@ export default function NewSpotForm() {
           <textarea
             type="text"
             name="description"
-            value={spotData.description || spot.description}
+            value={spotData.description}
             onChange={handleChange}
             placeholder="Please write atleast 30 characters"
             cols="30"
@@ -245,7 +276,7 @@ export default function NewSpotForm() {
           <input
             type="text"
             name="name"
-            value={spotData.name || spot.name}
+            value={spotData.name}
             onChange={handleChange}
             placeholder="Name of your spot"
           />
@@ -262,7 +293,7 @@ export default function NewSpotForm() {
             <input
               type="text"
               name="price"
-              value={spotData.price || spot.price}
+              value={spotData.price}
               onChange={handleChange}
               placeholder="Price per night (USD)"
             />
@@ -275,12 +306,14 @@ export default function NewSpotForm() {
           <input
             type="text"
             name="url"
-            value={imageData.url}
+            value={imageData.previewImage}
             // (spot?.SpotImages && Object.values(spot?.SpotImages)[0]?.url)
             placeholder="Preview Image URL"
             onChange={handleChange}
           />
-          {submitted && <p className="errors">{validationErrors.url}</p>}
+          {submitted && (
+            <p className="errors">{validationErrors.previewImage}</p>
+          )}
           <div>
             <input
               type="text"

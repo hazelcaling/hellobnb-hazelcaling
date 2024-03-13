@@ -5,10 +5,13 @@
 .spotDetails-body {
   margin-top: 10px;
   gap: 20px;
+  display: flex;
+  border: 2px solid green;
 }
 
 .owner-description {
   gap: 5px;
+  flex: 2;
 }
 
 .parent-images {
@@ -55,4 +58,41 @@
 
 h2 {
   text-align: left;
+}
+
+.call-out-info-box {
+  display: flex;
+  border: 2px solid blue;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1;
+  background-color: green;
+}
+
+.reserve-button {
+  background-color: salmon;
+  width: 400px;
+}
+
+.bottom {
+  align-self: center;
+}
+
+.right,
+.left,
+.bottom {
+  background-color: yellow;
+}
+
+.left {
+  align-self: flex-start;
+}
+
+.right {
+  align-self: flex-end;
+  margin-left: auto;
 }
