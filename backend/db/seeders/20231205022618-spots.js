@@ -25,7 +25,7 @@ module.exports = {
         lng: 1,
         name: `Debugging Haven ${i + 1}`,
         description:
-          "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia nam debitis reprehenderit ipsum possimus veniam. Non, sequi? Ducimus itaque similique ipsam velit explicabo eum reiciendis totam, laudantium quae expedita assumenda voluptatibus a amet, nulla, recusandae pariatur iusto maiores inventore optio!",
+          "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia nam debitis reprehenque ipsam velit explicabo eum reiciendis totam, laudantium quae expedita assumenda voluptatibus a amet, nulla, recusandae pariatur iusto maiores inventore optio!",
         price: i + 100,
       }
       spots.push(spot)
