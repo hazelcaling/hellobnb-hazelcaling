@@ -41,7 +41,7 @@ module.exports = {
         lng: 15,
         name: `Debugging Haven ${i + 50}`,
         description:
-          "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia nam debitis reprehenderit ipsum possimus veniam. Non, sequi? Ducimus itaque similique ipsam velit explicabo eum reiciendis totam, laudantium quae expedita assumenda voluptatibus a amet, nulla, recusandae pariatur iusto maiores inventore optio!",
+          "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia nam debitis reprehenque ipsam velit explicabo eum reiciendis totam, laudantium quae expedita assumenda voluptatibus a amet, nulla, recusandae pariatur iusto maiores inventore optio!",
         price: i + 200,
       }
       spots.push(spot2)
@@ -57,7 +57,7 @@ module.exports = {
         lng: 15,
         name: `Debugging Haven ${i + 100}`,
         description:
-          "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia nam debitis reprehenderit ipsum possimus veniam. Non, sequi? Ducimus itaque similique ipsam velit explicabo eum reiciendis totam, laudantium quae expedita assumenda voluptatibus a amet, nulla, recusandae pariatur iusto maiores inventore optio!",
+          "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia nam debitis reprehenque ipsam velit explicabo eum reiciendis totam, laudantium quae expedita assumenda voluptatibus a amet, nulla, recusandae pariatur iusto maiores inventore optio!",
         price: i + 300,
       }
       spots.push(spot3)
