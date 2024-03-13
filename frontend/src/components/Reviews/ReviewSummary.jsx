@@ -1,6 +1,9 @@
 import { FaStar } from "react-icons/fa"
 
 export default function ReviewSummary({ avgRating, numReviews }) {
+  if (avgRating) parseInt(avgRating)
+  if (numReviews) parseInt(numReviews)
+
   return (
     <>
       <span>

@@ -6,15 +6,9 @@ import { loadSpots } from "../../store/spots"
 import "./Spotlist.css"
 
 export default function SpotList() {
-  const dispatch = useDispatch()
   const spots = useSelector((state) => state.spots)
+  const dispatch = useDispatch()
   const spotList = Object.values(spots)
-  console.log(spots)
-
-  useEffect(() => {
-    dispatch(loadSpots())
-  }, [dispatch])
-
   const sortedSpots = spotList.sort(
     (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt)
   )
@@ -53,6 +47,10 @@ export default function SpotList() {
       </Link>
     </div>
   ))
+
+  useEffect(() => {
+    dispatch(loadSpots())
+  }, [dispatch])
 
   return <div className="spots-container-spotlist">{sortedSpotList}</div>
 }

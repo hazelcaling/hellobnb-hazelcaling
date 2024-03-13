@@ -151,15 +151,39 @@ export default function SpotForm({ spot }) {
     return createdSpot
   }
 
-  const handleUpdate = async (e, spotData) => {
-    // console.log("updated")
+  const handleUpdate = async (e) => {
     e.preventDefault()
+    const image = { url: imageData.url, preview: true }
+    await dispatch(addImage(spotId, image))
+    let image1
+    let image2
+    let image3
+    let image4
 
-    const editedSpot = await dispatch(updateSpot(spotId, spotData))
+    !spotData.imageUrl1
+      ? (image1 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image1 = { url: spotData.imageUrl1, preview: true })
+    await dispatch(addImage(spotId, image1))
+    !spotData.imageUrl2
+      ? (image2 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image2 = { url: spotData.imageUrl2, preview: true })
+    await dispatch(addImage(spotId, image2))
+    !spotData.imageUrl3
+      ? (image3 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image3 = { url: spotData.imageUrl3, preview: true })
+    await dispatch(addImage(spotId, image3))
+    !spotData.imageUrl4
+      ? (image4 = { url: "https://via.placeholder.com/300", preview: true })
+      : (image4 = { url: spotData.imageUrl4, preview: true })
+    await dispatch(addImage(spotId, image4))
 
-    if (editedSpot) {
-      navigate(`/spots/${spotId}`)
-      reset()
+    if (spotId) {
+      const editedSpot = await dispatch(updateSpot(spotId, spotData))
+
+      if (editedSpot) {
+        navigate(`/spots/${spotId}`)
+        reset()
+      }
     }
   }
 

@@ -7,6 +7,7 @@
   gap: 20px;
   display: flex;
   border: 2px solid green;
+  padding: 20px;
 }
 
 .owner-description {
@@ -61,7 +62,7 @@ h2 {
 }
 
 .call-out-info-box {
-  display: flex;
+  /* display: flex;
   border: 2px solid blue;
   flex-direction: column;
   justify-content: space-between;
@@ -70,29 +71,22 @@ h2 {
   padding: 20px;
   border-radius: 10px;
   flex: 1;
-  background-color: green;
+  background-color: green; */
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid black;
+  border-radius: 10px;
 }
 
 .reserve-button {
   background-color: salmon;
-  width: 400px;
-}
+  width: 300px;
 
-.bottom {
   align-self: center;
 }
 
-.right,
-.left,
 .bottom {
-  background-color: yellow;
-}
-
-.left {
-  align-self: flex-start;
-}
-
-.right {
   align-self: flex-end;
-  margin-left: auto;
+
+  height: 50px;
 }

@@ -2,14 +2,13 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { getSpotById } from "../../store/spots"
+import { loadAllReviews } from "../../store/reviews"
 import ReviewSummary from "../Reviews/ReviewSummary"
 import Reviews from "../Reviews/Reviews"
 import PostReviewModal from "../Reviews/PostReviewModal"
 import "./SpotDetails.css"
 
 export default function SpotDetails() {
-  console.log("rendering")
-
   const dispatch = useDispatch()
   const { spotId } = useParams()
 
@@ -37,9 +36,9 @@ export default function SpotDetails() {
     alert("Feature coming soon")
   }
 
-  // useEffect(() => {
-  //   dispatch(loadAllReviews(spotId))
-  // }, [spotId, dispatch])
+  useEffect(() => {
+    dispatch(loadAllReviews(spotId))
+  }, [spotId, dispatch])
 
   return (
     <div className="spotDetails-container">
@@ -91,6 +90,7 @@ export default function SpotDetails() {
               spotId={spotId}
             />
           </div>
+
           <div className="bottom">
             <button
               onClick={handleClick}

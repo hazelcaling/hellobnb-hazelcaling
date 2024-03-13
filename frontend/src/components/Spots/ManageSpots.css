@@ -10,22 +10,23 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   /* background-color: yellow; */
-  gap: 10px;
+  gap: 30px;
   border-radius: 5px;
 }
 
 .spot-container {
   width: 300px;
   height: 220px;
-  /* border: 5px solid blue; */
 
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
+  margin: 40px;
 }
 
 .spot-container img {
   width: 100%;
   height: 100%;
-  /* border: 2px solid purple; */
+  border: 2px solid black;
+  border-radius: 10px;
 }
 
 .manage-spots-title,
@@ -36,8 +37,8 @@
 .manage-spots-update-delete-buttons-container {
   display: flex;
   justify-content: flex-start;
-  /* border: 5px solid green; */
-  /* border: 5px solid green; */
+  /* border: 5px solid green;
+  background-color: yellow; */
 }
 
 button {
@@ -45,6 +46,8 @@ button {
   font-size: 16px;
   font-weight: bold;
   border-radius: 4px;
+  position: relative;
+  top: -20px;
 }
 
 .manage-spot-content {
@@ -53,4 +56,13 @@ button {
 }
 .price {
   justify-self: flex-end;
+}
+
+.manage-spot-content,
+.price {
+  position: relative;
+  top: -5px;
+  height: -20px;
+  margin-bottom: 5px;
+  padding: 5px;
 }
