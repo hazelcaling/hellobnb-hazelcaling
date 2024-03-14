@@ -1,7 +1,7 @@
 import OpenModalButton from "../Navigation/OpenModalButton"
 import PostReview from "./ReviewForm"
 import { useSelector } from "react-redux/es/hooks/useSelector"
-export default function PostReviewModal({ spotId }) {
+export default function PostReviewModal({ spotId, onReviewPosted }) {
   const reviews = useSelector((state) => state.reviews)
   const hasPostedReview =
     useSelector((state) => state.session.user.id) ===
@@ -16,6 +16,7 @@ export default function PostReviewModal({ spotId }) {
             <PostReview
               spotId={spotId}
               reviews={reviews}
+              onReviewPosted={onReviewPosted}
             />
           }
         />
