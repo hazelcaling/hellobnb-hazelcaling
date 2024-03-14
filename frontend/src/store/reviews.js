@@ -6,6 +6,7 @@ const ADD_REVIEW = "reviews/reviewAdded"
 const DELETE = "reviews/DELETE"
 
 // action creators
+
 const loadReviews = (reviews) => {
   return {
     type: LOAD_REVIEWS,
@@ -27,6 +28,7 @@ export const deleteReview = (reviewId) => {
   }
 }
 // thunk action creators
+
 export const loadAllReviews = (spotId) => async (dispatch) => {
   const response = await fetch(`/api/spots/${spotId}/reviews`)
 

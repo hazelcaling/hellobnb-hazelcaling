@@ -4,7 +4,8 @@ import { useDispatch } from "react-redux"
 import { createReview } from "../../store/reviews"
 import { useModal } from "../../context/Modal"
 import React from "react"
-export default function ReviewForm({ spotId }) {
+
+export default function ReviewForm({ spotId, onReviewPosted }) {
   const { closeModal } = useModal()
   const dispatch = useDispatch()
   const [rating, setRating] = useState(0)
@@ -12,6 +13,7 @@ export default function ReviewForm({ spotId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    onReviewPosted()
     const createdReview = await dispatch(
       createReview(spotId, {
         review: textReview,
@@ -61,6 +63,7 @@ export default function ReviewForm({ spotId }) {
           disabled={textReview.length < 10 || rating === 0}
           type="submit"
           className="submit-review-button"
+          onClick={() => onReviewPosted()}
         >
           Submit Your Review
         </button>

@@ -1,6 +1,7 @@
 import DeleteReviewModal from "./DeleteReviewModal"
 import { useSelector } from "react-redux"
-export default function ReviewDetails({ review, isLoggedIn }) {
+
+export default function ReviewDetails({ review, isLoggedIn, onDeleteReview }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     const options = { month: "long", year: "numeric" }
@@ -16,7 +17,10 @@ export default function ReviewDetails({ review, isLoggedIn }) {
       <div className="review-text">{review.review}</div>
       {isLoggedIn && isReviewOwner && (
         <div>
-          <DeleteReviewModal reviewId={review.id} />
+          <DeleteReviewModal
+            reviewId={review.id}
+            onDeleteReview={onDeleteReview}
+          />
         </div>
       )}
     </>
