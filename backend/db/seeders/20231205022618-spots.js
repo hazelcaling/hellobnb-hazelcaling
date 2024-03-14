@@ -14,7 +14,7 @@ module.exports = {
     const user2 = await User.findOne({ where: { username: "FakeUser1" } })
     const user3 = await User.findOne({ where: { username: "FakeUser2" } })
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 4; i++) {
       const spot = {
         ownerId: user.id,
         address: `${i + 1} Street`,
@@ -30,7 +30,7 @@ module.exports = {
       }
       spots.push(spot)
     }
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 4; i++) {
       const spot2 = {
         ownerId: user2.id,
         address: `${i + 50} Street`,
@@ -46,7 +46,7 @@ module.exports = {
       }
       spots.push(spot2)
     }
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 4; i++) {
       const spot3 = {
         ownerId: user3.id,
         address: `${i + 100} Street`,

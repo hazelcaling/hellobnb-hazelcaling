@@ -6,11 +6,12 @@ import { createNewSpot } from "../../store/spots"
 import { addImage } from "../../store/image"
 import { updateSpot } from "../../store/spots"
 
-export default function SpotForm({ spot }) {
+export default function SpotForm({ spot, images }) {
   const { spotId } = useParams()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   let initialValue
+
   if (spotId) {
     initialValue = { ...spot }
   } else {
@@ -33,15 +34,22 @@ export default function SpotForm({ spot }) {
 
   const [submitted, setSubmitted] = useState(false)
   const [spotData, setSpotData] = useState({ ...initialValue })
-
-  useEffect(() => {
-    setSpotData({ ...spot })
-  }, [spot])
-
   const [imageData, setImageData] = useState({
     url: "",
     preview: true,
   })
+
+  useEffect(() => {
+    setSpotData({ ...spot })
+    if (images) {
+      const imagesArr = Object.values(images)
+      // imageData.previewImage = imagesArr[0].url
+      setImageData({
+        url: imagesArr[0].url,
+        preview: true,
+      })
+    }
+  }, [spot])
 
   const [validationErrors, setValidationErrors] = useState({})
 
@@ -81,7 +89,7 @@ export default function SpotForm({ spot }) {
       errors.description = "Description needs a minimum of 30 characters"
     if (!name) errors.name = "Name is required"
     if (!regex.test(url))
-      errors.previewImage = "Image URL must end in .png, .jpg, or .jpeg"
+      errors.url = "Image URL must end in .png, .jpg, or .jpeg"
     if (!url) errors.url = "Preview image is required"
     if (!price) errors.price = "Price is required"
     if (imageUrl1 && !regex.test(imageUrl1))
@@ -330,14 +338,12 @@ export default function SpotForm({ spot }) {
           <input
             type="text"
             name="url"
-            value={imageData.previewImage}
+            value={imageData.url}
             // (spot?.SpotImages && Object.values(spot?.SpotImages)[0]?.url)
             placeholder="Preview Image URL"
             onChange={handleChange}
           />
-          {submitted && (
-            <p className="errors">{validationErrors.previewImage}</p>
-          )}
+          {submitted && <p className="errors">{validationErrors.url}</p>}
           <div>
             <input
               type="text"

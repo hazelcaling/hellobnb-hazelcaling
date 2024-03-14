@@ -16,6 +16,10 @@ export default function ManageSpots() {
     (spot) => spot?.ownerId === userId
   )
 
+  // const sortedUserSpots = userSpots.sort(
+  //   (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt)
+  // )
+
   useEffect(() => {
     dispatch(loadSpots())
   }, [dispatch])
@@ -45,7 +49,8 @@ export default function ManageSpots() {
                   {spot?.previewImage === "No image" ? (
                     <img
                       src="https://via.placeholder.com/300"
-                      style={{ height: "200px" }}
+                      // style={{ height: "200px" }}
+                      style={{ maxWidth: "100%", maxHeight: "100%" }}
                     />
                   ) : (
                     <img
