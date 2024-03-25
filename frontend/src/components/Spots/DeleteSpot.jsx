@@ -15,8 +15,18 @@ export default function DeleteSpot({ spotId }) {
     <div className="delete-spot-container">
       <h2>Confirm Delete</h2>
       <p>Are you sure you want to remove this spot from the listings?</p>
-      <button onClick={deleteSpot}>Yes (Delete Spot)</button>
-      <button onClick={() => closeModal()}>No (Keep Spot)</button>
+      <button
+        onClick={deleteSpot}
+        style={{ background: "red", color: "white" }}
+      >
+        Yes (Delete Spot)
+      </button>
+      <button
+        onClick={() => closeModal()}
+        style={{ background: "gray", color: "white" }}
+      >
+        No (Keep Spot)
+      </button>
     </div>
   )
 }
