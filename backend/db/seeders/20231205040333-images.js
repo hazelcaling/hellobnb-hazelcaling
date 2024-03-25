@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === "production") {
 module.exports = {
   async up(queryInterface, Sequelize) {
     const spot = await Spot.findOne({ where: { address: "1 Street" } })
+
     await Image.bulkCreate([
       {
         imageableId: spot.id,
