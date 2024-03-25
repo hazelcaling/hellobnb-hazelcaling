@@ -24,7 +24,7 @@ export default function SpotDetails() {
   // const fn = spot?.Owner?.firstName
   // const ln = spot?.Owner?.lastName
   const isLoggedIn = useSelector((state) => state.session.user !== null)
-  const currentUserId = useSelector((state) => state.session.user.id)
+  const currentUserId = useSelector((state) => state.session.user?.id)
   const [userHasPostedReview, setUserHasPostedReview] = useState(false)
   const isOwner = useSelector(
     (state) => state.spots?.ownerId === state.session.user?.id
