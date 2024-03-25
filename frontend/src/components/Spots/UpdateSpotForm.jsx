@@ -343,7 +343,7 @@ export default function UpdateSpotForm() {
             </div>
           </div>
           <div className="submit-container">
-            <button type="submit">Update Spot</button>
+            <button type="submit">Update your Spot</button>
           </div>
         </form>
       )}

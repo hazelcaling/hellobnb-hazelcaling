@@ -14,8 +14,18 @@ export default function DeleteReview({ reviewId, onDeleteReview }) {
     <div className="delete-review-container">
       <h2>Confirm Delete</h2>
       <p>Are you sure you want to delete this review?</p>
-      <button onClick={deleteReview}>Yes (Delete Review)</button>
-      <button onClick={() => closeModal()}>No (Keep Review)</button>
+      <button
+        onClick={deleteReview}
+        style={{ background: "red", color: "white" }}
+      >
+        Yes (Delete Review)
+      </button>
+      <button
+        onClick={() => closeModal()}
+        style={{ background: "gray", color: "white" }}
+      >
+        No (Keep Review)
+      </button>
     </div>
   )
 }
