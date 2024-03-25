@@ -15,6 +15,7 @@ export default function SpotDetails() {
 
   const [numReviews, setNumReviews] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  // const [hasPostedReview, setHasPostedReview] = useState(false)
 
   const handleReviewPosted = () => {
     setNumReviews(numReviews + 1)
@@ -23,6 +24,8 @@ export default function SpotDetails() {
   // const fn = spot?.Owner?.firstName
   // const ln = spot?.Owner?.lastName
   const isLoggedIn = useSelector((state) => state.session.user !== null)
+  const currentUserId = useSelector((state) => state.session.user.id)
+  const [userHasPostedReview, setUserHasPostedReview] = useState(false)
   const isOwner = useSelector(
     (state) => state.spots?.ownerId === state.session.user?.id
   )
@@ -32,6 +35,7 @@ export default function SpotDetails() {
   const hasPostedReview = reviewArr.filter(
     (review) => review.userId === spot.ownerId
   )
+
   const spotImages = useSelector((state) => state?.spots?.SpotImages)
 
   useEffect(() => {
@@ -47,8 +51,15 @@ export default function SpotDetails() {
   }
 
   useEffect(() => {
-    dispatch(loadAllReviews(spotId))
-  }, [spotId, dispatch])
+    dispatch(loadAllReviews(spotId)).then((response) => {
+      const currentuserHasPostedReview = response.Reviews.filter(
+        (review) => review.userId === currentUserId
+      )
+      if (currentuserHasPostedReview.length > 0) {
+        setUserHasPostedReview(true)
+      }
+    })
+  }, [spotId, dispatch, currentUserId])
 
   return (
     <>
@@ -120,12 +131,15 @@ export default function SpotDetails() {
               numReviews={spot?.numReviews}
               spotId={spotId}
             />
-            {isLoggedIn && hasPostedReview.length === 0 && !isOwner && (
-              <PostReviewModal
-                spotId={spotId}
-                onReviewPosted={handleReviewPosted}
-              />
-            )}
+            {isLoggedIn &&
+              hasPostedReview.length === 0 &&
+              !isOwner &&
+              !userHasPostedReview && (
+                <PostReviewModal
+                  spotId={spotId}
+                  onReviewPosted={handleReviewPosted}
+                />
+              )}
             <div>
               {spot?.numReviews === 0 &&
                 isLoggedIn &&

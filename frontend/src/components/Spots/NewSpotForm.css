@@ -1,51 +1,81 @@
 .spot-form {
-    max-width: 600px;
-    margin: 200px auto 200px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  max-width: 600px;
+  margin: 200px auto 200px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .fields-container {
-    width: 100%;
-    margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .fields-container label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .submit-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .submit {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .submit:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .errors {
-    color: red;
-    font-size: 14px;
-    margin-left: 10px
+  color: red;
+  font-size: 14px;
+  margin-left: 10px;
 }
 
 .input-error {
-    border-color: red;
+  border-color: red;
+}
+
+.cityState {
+  display: flex;
+}
+
+.latlng {
+  display: flex;
+}
+
+.latlng input {
+  margin-right: 10px;
+}
+
+.fields-container input {
+  display: flex;
+}
+
+.fields-container input {
+  flex-grow: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fifth-section input {
+  display: flex;
+}
+
+.fifth-section input {
+  margin-bottom: 5px;
 }
